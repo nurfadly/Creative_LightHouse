@@ -289,7 +289,74 @@
       .screenshot:first-child { grid-column: span 1; }
     }
     @media (max-width: 768px) {
+
+    /* ─── Hamburger & Mobile Menu ──────────────────────── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 40px; height: 40px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      gap: 5px;
+      padding: 4px;
+      border-radius: 8px;
+      transition: background .2s;
+      z-index: 1001;
+    }
+    .nav-hamburger:hover { background: rgba(0,0,0,.06); }
+    .nav-hamburger span {
+      display: block;
+      width: 22px; height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform .3s ease, opacity .3s ease, width .3s ease;
+      transform-origin: center;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; width: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      opacity: 0;
+      transform: translateY(-12px);
+      transition: opacity .3s ease, transform .3s ease;
+      pointer-events: none;
+    }
+    .mobile-menu.open {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+    .mobile-menu a {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -.02em;
+      transition: color .2s;
+    }
+    .mobile-menu a:hover { color: var(--primary); }
+    .mobile-menu .mobile-cta {
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
       .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .mobile-menu { display: flex; }
     }
   </style>
 </head>
@@ -314,7 +381,18 @@
     <li><a href="lighthouse-kontak.html">Kontak</a></li>
   </ul>
   <a href="lighthouse-kontak.html" class="btn btn-primary nav-cta">Mulai Proyek ↗</a>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="lighthouse-tentang.html">Tentang</a>
+  <a href="lighthouse-layanan.html">Layanan</a>
+  <a href="lighthouse-portfolio.html">Portfolio</a>
+  <a href="lighthouse-kontak.html">Kontak</a>
+  <a href="lighthouse-kontak.html" class="btn btn-primary mobile-cta">Mulai Proyek ↗</a>
+</div>
 
 <!-- BACK BAR -->
 <div class="back-bar">
@@ -792,6 +870,22 @@
   }
 
   render();
+
+  // Hamburger menu toggle
+  const hamburger = document.getElementById('nav-hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+  hamburger.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('open', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      hamburger.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
 </script>
 </body>
 </html>
