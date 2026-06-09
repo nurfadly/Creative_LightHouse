@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lighthouse — Digital Agency</title>
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary:    #fc4615;
+      --primary-d:  #d93a0f;
+      --primary-l:  #fff1ee;
+      --bg:         #ffffff;
+      --bg-2:       #f8f8f8;
+      --bg-3:       #f0f0f0;
+      --border:     #e5e5e5;
+      --text:       #111111;
+      --text-mid:   #555555;
+      --text-light: #888888;
+      --font:       'Inter', system-ui, -apple-system, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+
+    /* ─── Typography helpers ───────────────────────────── */
+    .label {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      line-height: 1.15;
+      color: var(--text);
+    }
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--text-mid);
+      max-width: 520px;
+      line-height: 1.7;
+    }
+
+    /* ─── Buttons ──────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .9rem 2.2rem;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: .95rem;
+      cursor: pointer;
+      transition: all .2s ease;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--primary-d); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(252,70,21,.25); }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
+
+    /* ─── Navbar ───────────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 5vw;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow .3s;
+    }
+    .nav-logo svg { height: 30px; width: auto; }
+    .nav-links {
+      display: flex;
+      gap: 2.2rem;
+      list-style: none;
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--text-mid);
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { font-size: .88rem; padding: .65rem 1.6rem; }
+    .nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,.08); }
+
+    /* ─── Hero ─────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10rem 5vw 7rem;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    /* Soft orange glow */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 70% 25%, rgba(252,70,21,.07) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 20% 80%, rgba(252,70,21,.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    /* Subtle grid */
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,0,0,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,.035) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      mask-image: radial-gradient(ellipse 85% 85% at center, black 40%, transparent 100%);
+    }
+    .hero-grain { display: none; }
+    .hero-inner {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .hero-content { position: relative; width: 100%; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      background: var(--primary-l);
+      border: 1px solid rgba(252,70,21,.2);
+      border-radius: 100px;
+      padding: .45rem 1.1rem;
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 2rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      animation: pulse 2s infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(1.5); }
+    }
+    .hero-title {
+      font-size: clamp(3.2rem, 8vw, 6.5rem);
+      font-weight: 900;
+      line-height: 1.03;
+      letter-spacing: -.03em;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+    /* Italic serif second line */
+    .hero-title .hero-serif {
+      display: block;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--primary);
+      font-size: clamp(2.6rem, 6.5vw, 5.5rem);
+      letter-spacing: -.01em;
+      line-height: 1.1;
+    }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--text-mid);
+      max-width: 500px;
+      margin: 0 auto 2.8rem;
+      line-height: 1.8;
+    }
+    .hero-sub strong { color: var(--text); font-weight: 600; }
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column;
+      align-items: center; gap: .5rem;
+      color: var(--text-light);
+      font-size: .68rem;
+      letter-spacing: .12em; text-transform: uppercase;
+      animation: scrollBounce 2s infinite;
+    }
+    .hero-scroll svg { width: 18px; height: 18px; opacity: .4; }
+    @keyframes scrollBounce {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(7px); }
+    }
+
+    /* ─── Stats Bar ────────────────────────────────────── */
+    .stats-bar {
+      background: var(--text);
+      padding: 2.5rem 5vw;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      flex: 1;
+      min-width: 140px;
+      text-align: center;
+      padding: 1rem 2rem;
+      position: relative;
+    }
+    .stat-item + .stat-item::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 20%; bottom: 20%;
+      width: 1px;
+      background: rgba(255,255,255,.15);
+    }
+    .stat-number {
+      font-size: 2.6rem;
+      font-weight: 900;
+      color: var(--primary);
+      line-height: 1;
+      letter-spacing: -.02em;
+    }
+    .stat-label {
+      font-size: .8rem;
+      color: rgba(255,255,255,.5);
+      font-weight: 500;
+      margin-top: .4rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    /* ─── Sections Shared ──────────────────────────────── */
+    section { padding: 6rem 5vw; }
+    .section-header {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 3.5rem;
+    }
+    .section-header.centered { align-items: center; text-align: center; }
+    .section-header.centered .section-sub { margin: 0 auto; }
+
+    /* ─── Services ─────────────────────────────────────── */
+    .services { background: var(--bg-2); }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    @media (max-width: 900px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .services-grid { grid-template-columns: 1fr; }
+    }
+    .service-card {
+      background: var(--bg);
+      padding: 2.5rem;
+      position: relative;
+      transition: background .2s, box-shadow .2s;
+    }
+    .service-card:hover { background: #fff; box-shadow: inset 0 0 0 2px var(--primary); z-index: 1; }
+    .service-icon {
+      width: 48px; height: 48px;
+      background: var(--primary-l);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.4rem;
+    }
+    .service-icon svg { width: 24px; height: 24px; stroke: var(--primary); fill: none; stroke-width: 1.8; }
+    .service-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: .5rem;
+      color: var(--text);
+    }
+    .service-desc {
+      font-size: .9rem;
+      color: var(--text-mid);
+      line-height: 1.65;
+    }
+    .service-arrow {
+      position: absolute;
+      bottom: 1.8rem; right: 1.8rem;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--bg-3);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-light);
+      font-size: .9rem;
+      transition: background .2s, color .2s, transform .2s;
+    }
+    .service-card:hover .service-arrow { background: var(--primary); color: #fff; transform: translate(2px,-2px); }
+
+    /* ─── Portfolio ────────────────────────────────────── */
+    .portfolio { background: var(--bg-2); }
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.2rem;
+      align-items: start;
+    }
+    .project-card {
+      border-radius: 20px;
+      overflow: hidden;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transition: transform .4s ease, box-shadow .4s ease;
+    }
+    .project-card:hover { transform: translateY(-5px); box-shadow: 0 20px 56px rgba(0,0,0,.1); }
+    .project-card:nth-child(1) { grid-column: span 7; }
+    .project-card:nth-child(2) { grid-column: span 5; }
+    .project-card:nth-child(3) { grid-column: span 4; }
+    .project-card:nth-child(4) { grid-column: span 4; }
+    .project-card:nth-child(5) { grid-column: span 4; }
+
+    /* Thumbnail wrapper */
+    .project-thumb-wrapper {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 16/9;
+      flex-shrink: 0;
+    }
+    .project-card:nth-child(1) .project-thumb-wrapper,
+    .project-card:nth-child(2) .project-thumb-wrapper { aspect-ratio: 4/3; }
+
+    .project-thumb-placeholder {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .55s ease;
+    }
+    .project-card:hover .project-thumb-placeholder { transform: scale(1.06); }
+
+    /* Category badge on image */
+    .project-cat-badge {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      z-index: 2;
+      background: rgba(255,255,255,.18);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 100px;
+      padding: .3rem 1rem;
+      font-size: .68rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    /* Card body — below image */
+    .project-body {
+      padding: 1.4rem 1.6rem 1.6rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .project-cat {
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: .5rem;
+    }
+    .project-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      line-height: 1.3;
+      color: var(--text);
+      margin-bottom: .6rem;
+    }
+    .project-card:nth-child(1) .project-title,
+    .project-card:nth-child(2) .project-title { font-size: 1.2rem; }
+    .project-desc {
+      font-size: .875rem;
+      color: var(--text-mid);
+      line-height: 1.7;
+      flex: 1;
+      margin-bottom: 1.2rem;
+    }
+    .project-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .project-year {
+      font-size: .78rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+    .project-arrow {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--bg-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-mid);
+      transition: background .25s, color .25s, transform .25s;
+    }
+    .project-card:hover .project-arrow {
+      background: var(--primary);
+      color: #fff;
+      transform: translate(2px,-2px);
+    }
+    .portfolio-cta { text-align: center; margin-top: 3rem; }
+
+    /* ─── Process ──────────────────────────────────────── */
+    .process { background: var(--bg-2); }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0;
+      position: relative;
+    }
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      top: 2.5rem; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(252,70,21,.25) 20%, rgba(252,70,21,.25) 80%, transparent);
+    }
+    .step { padding: 0 1.5rem 2rem; position: relative; text-align: center; }
+    .step-num {
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid rgba(252,70,21,.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; font-weight: 800;
+      color: var(--primary);
+      margin: 0 auto 1.4rem;
+      position: relative; z-index: 1;
+      transition: background .2s, color .2s, border-color .2s;
+    }
+    .step:hover .step-num { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .step-name { font-size: 1rem; font-weight: 700; margin-bottom: .5rem; color: var(--text); }
+    .step-desc { font-size: .85rem; color: var(--text-mid); line-height: 1.6; }
+
+    /* ─── Testimonials ─────────────────────────────────── */
+    .testimonials { background: var(--bg); }
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .testi-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      transition: border-color .3s, box-shadow .3s;
+    }
+    .testi-card:hover { border-color: var(--primary); box-shadow: 0 8px 32px rgba(252,70,21,.08); }
+    .testi-quote {
+      font-size: 3rem; line-height: 1;
+      color: var(--primary);
+      font-family: Georgia, serif;
+      margin-bottom: .5rem;
+      opacity: .5;
+    }
+    .testi-text {
+      font-size: .95rem;
+      color: var(--text-mid);
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+    }
+    .testi-author { display: flex; align-items: center; gap: .9rem; }
+    .testi-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, #ff8060 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .9rem;
+      color: #fff; flex-shrink: 0;
+    }
+    .testi-name { font-size: .9rem; font-weight: 700; color: var(--text); }
+    .testi-role { font-size: .78rem; color: var(--text-light); margin-top: .15rem; }
+
+    /* ─── CTA Section ──────────────────────────────────── */
+    .cta-section {
+      background: var(--primary);
+      text-align: center;
+      padding: 7rem 5vw;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-pattern {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+    .cta-section .label { color: rgba(255,255,255,.75); display: block; }
+    .cta-section .section-title { color: #fff; max-width: 640px; margin: 1rem auto; }
+    .cta-section .section-sub { color: rgba(255,255,255,.75); margin: 0 auto 2.5rem; max-width: 480px; }
+
+    /* ─── Inquiry Form ─────────────────────────────────── */
+    .inquiry-form {
+      max-width: 540px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-input {
+      width: 100%;
+      padding: .85rem 1.1rem;
+      background: rgba(255,255,255,.15);
+      border: 1.5px solid rgba(255,255,255,.25);
+      border-radius: 8px;
+      color: #fff;
+      font-size: .9rem;
+      outline: none;
+      font-family: var(--font);
+      transition: border-color .2s, background .2s;
+    }
+    .form-input::placeholder { color: rgba(255,255,255,.55); }
+    .form-input:focus { border-color: #fff; background: rgba(255,255,255,.2); }
+    .form-input option { color: #111; background: #fff; }
+    .form-submit {
+      width: 100%;
+      padding: 1rem;
+      background: #fff;
+      color: var(--primary);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background .2s, transform .2s, box-shadow .2s;
+    }
+    .form-submit:hover { background: #111; color: #fff; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+
+    /* ─── Footer ───────────────────────────────────────── */
+    footer {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 5vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    footer .footer-logo svg { height: 26px; width: auto; }
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      font-size: .85rem;
+      color: var(--text-light);
+    }
+    .footer-links a:hover { color: var(--primary); }
+    .footer-copy { font-size: .8rem; color: var(--text-light); }
+
+    /* ─── Scrollbar ────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg-2); }
+    ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+    /* ─── Responsive ───────────────────────────────────── */
+    @media (max-width: 900px) {
+      .hero-title { font-size: clamp(2.8rem, 9vw, 4rem); }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .portfolio-grid { grid-template-columns: 1fr 1fr; gap: .8rem; }
+      .project-card:nth-child(n) { grid-column: span 1 !important; min-height: 220px !important; }
+      .project-card:nth-child(1) { grid-column: span 2 !important; min-height: 260px !important; }
+      .process-steps::before { display: none; }
+      .stats-bar { flex-direction: column; align-items: center; }
+      .stat-item + .stat-item::before { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .project-card:nth-child(n) { grid-column: span 1 !important; min-height: 200px !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ NAVBAR ═══════════════════ -->
+<nav class="nav" id="navbar">
+  <a href="#" class="nav-logo">
+    <!-- Light mode logo: circle mark stays orange+white, wordmark uses dark text -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 282.17 83.2">
+      <defs>
+        <style>
+          .lm-orange { fill: #fc4615; }
+          .lm-white  { fill: #ffffff; }
+          .lm-dark   { fill: #111111; }
+          .lm-tag    { fill: #fc4615; }
+        </style>
+      </defs>
+      <!-- Circle mark -->
+      <circle class="lm-orange" cx="41.6" cy="41.6" r="41.6"/>
+      <!-- Icon inside circle (white) -->
+      <path class="lm-white" d="M65.79,42.77c-.06.62-.11,1.24-.17,1.86-.02.2-.05.4-.08.62-.47.03-.93.07-1.38.09-2.58.11-5.17.21-7.75.33-.72.03-1.46.02-2.16.19-1.37.32-2.26,1.22-2.6,2.57-.34,1.36.07,2.53,1.07,3.51,2.18,2.15,4.35,4.3,6.53,6.45.04.03.06.08.13.16-.44.42-.87.85-1.33,1.3-.52-.48-1.04-.94-1.55-1.42-2.45-2.25-4.9-4.49-7.33-6.77-1.06-1-1.84-2.2-2.12-3.68-.81-4.26,1.84-7.86,5.69-8.53.9-.16,1.83-.14,2.74-.18,2.79-.12,5.57-.24,8.36-.35.56-.02,1.11,0,1.73,0,.08.86.16,1.74.24,2.63v1.22Z"/>
+      <path class="lm-white" d="M19.81,31.41c.97-1.95,2.15-3.71,3.59-5.33.87.57,1.72,1.13,2.57,1.69,2.3,1.52,4.58,3.04,6.89,4.54,1.21.78,2.48.81,3.72.08,1.22-.72,1.83-1.84,1.75-3.25-.05-.87-.26-1.73-.4-2.6-.44-2.68-.88-5.37-1.32-8.05,0-.01,0-.02.04-.09.49-.08,1.01-.16,1.53-.25.23-.04.26.1.3.29.58,2.88,1.17,5.75,1.74,8.63.28,1.41.58,2.81.8,4.23.65,4.17-2.52,7.54-5.89,8.02-1.89.27-3.6-.13-5.19-1.19-3.21-2.15-6.43-4.27-9.65-6.4-.15-.1-.29-.2-.48-.32Z"/>
+      <path class="lm-white" d="M51.74,20.18c-.18.65-.35,1.3-.52,1.95-.82,2.95-1.64,5.9-2.45,8.86-.63,2.29,1.08,4.56,3.43,4.5.55-.01,1.14-.18,1.64-.42,2.9-1.46,5.77-2.97,8.66-4.45.08-.04.16-.08.29-.13.27.55.54,1.09.83,1.66-.78.44-1.52.86-2.26,1.28-2.82,1.59-5.63,3.19-8.46,4.75-1.24.69-2.56,1.16-4.01,1.06-4.08-.28-6.44-3.21-6.81-6.2-.16-1.25.1-2.42.43-3.61.99-3.52,1.97-7.05,2.95-10.58.16-.59.16-.59.76-.47,1.83.35,3.6.91,5.29,1.69.07.03.13.07.23.12Z"/>
+      <path class="lm-white" d="M24.73,59.58c-1.56-1.49-2.87-3.14-3.99-5,.1-.09.2-.18.3-.27,2.66-2.12,5.32-4.25,7.98-6.36,1.24-.99,1.71-2.26,1.33-3.79-.35-1.44-1.57-2.4-3.13-2.63-2.8-.41-5.6-.85-8.41-1.28-.45-.07-.9-.13-1.41-.21.07-.62.14-1.21.21-1.84.79.09,1.55.17,2.3.26,1.68.19,3.36.37,5.04.58,2.09.26,4.2.47,6.27.85,3.23.6,5.14,3.74,5.34,6.11.21,2.55-.63,4.66-2.62,6.27-2.98,2.41-6,4.78-9,7.16-.06.05-.12.09-.21.15Z"/>
+      <path class="lm-white" d="M31.98,64.42c-.56-.27-1.11-.53-1.68-.81.45-.99.89-1.95,1.33-2.91,1.24-2.7,2.47-5.41,3.73-8.11,1.05-2.24,2.79-3.61,5.23-4.09,3.35-.65,6.71,1.23,7.9,4.44,1.3,3.48,2.59,6.96,3.89,10.43.08.22.13.37-.16.51-1.73.83-3.52,1.47-5.38,1.9-.31.07-.43,0-.55-.3-1.14-3.06-2.29-6.12-3.44-9.18-.56-1.48-1.62-2.35-3.2-2.44-1.56-.08-2.71.67-3.41,2.07-1.36,2.71-2.72,5.41-4.08,8.12-.06.11-.12.22-.2.36Z"/>
+      <!-- LIGHTHOUSE wordmark — 3D shadow layer (orange) -->
+      <path class="lm-orange" d="M104.15,42.7c-2.14,0-3.58-1.44-3.58-3.58v-17.07c0-2.14,1.44-3.58,3.58-3.58h1.83c2.14,0,3.58,1.44,3.58,3.58v12.36h4.66c2.14,0,3.58,1.44,3.58,3.58v1.13c0,2.14-1.44,3.58-3.58,3.58h-10.08Z"/>
+      <rect class="lm-orange" x="115.77" y="18.46" width="9" height="24.24" rx="3.58" ry="3.58"/>
+      <path class="lm-orange" d="M135.53,43.04c-1.55,0-3.07-.29-4.5-.87-1.43-.57-2.72-1.4-3.82-2.47-1.12-1.07-2.01-2.39-2.66-3.92-.65-1.53-.98-3.24-.98-5.09s.32-3.49.94-5.02c.63-1.54,1.52-2.89,2.65-4.01,1.13-1.12,2.48-2,4.02-2.63,1.54-.62,3.23-.94,5.03-.94.93,0,1.82.08,2.64.23.78.15,1.51.32,2.15.53.67.21,1.26.45,1.76.71.5.26.89.49,1.19.7.9.67,1.41,1.45,1.54,2.35.11.81-.09,1.65-.6,2.5l-.75,1.19c-.23.39-.49.68-.76.91h.03c2.14,0,3.58,1.44,3.58,3.58v8.3c0,2.14-1.44,3.58-3.58,3.58h-.93c-.9,0-1.66-.23-2.27-.67-.51.25-1.09.46-1.77.65-.85.24-1.82.36-2.91.36ZM136.52,26.7c-.73,0-1.34.1-1.81.3-.45.19-.81.44-1.09.76-.29.33-.5.69-.64,1.12-.16.49-.24,1.01-.24,1.55,0,.67.1,1.25.31,1.74.21.51.48.92.82,1.26.32.33.69.58,1.13.75.46.18.93.27,1.44.27.07,0,.13,0,.2,0-.59-.62-.93-1.5-.93-2.54v-1.1c0-2.02,1.27-3.41,3.21-3.57-.28-.13-.58-.25-.89-.36-.24-.09-.7-.19-1.5-.19Z"/>
+      <path class="lm-orange" d="M161.89,42.7c-2.14,0-3.58-1.44-3.58-3.58v-4.32h-3.27v4.32c0,2.14-1.44,3.58-3.58,3.58h-1.83c-2.14,0-3.59-1.44-3.59-3.58v-17.07c0-2.14,1.44-3.58,3.59-3.58h1.83c2.14,0,3.58,1.44,3.58,3.58v4.49h3.27v-4.49c0-2.14,1.44-3.58,3.58-3.58h1.83c2.14,0,3.58,1.44,3.58,3.58v17.07c0,2.14-1.44,3.58-3.58,3.58h-1.83Z"/>
+      <path class="lm-orange" d="M175.07,42.7c-2.14,0-3.58-1.44-3.58-3.58v-12.36h-2.54c-2.14,0-3.58-1.44-3.58-3.58v-1.13c0-2.14,1.44-3.58,3.58-3.58h14.08c2.14,0,3.58,1.44,3.58,3.58v1.13c0,2.14-1.44,3.58-3.58,3.58h-2.54v12.36c0,2.14-1.44,3.58-3.58,3.58h-1.83Z"/>
+      <path class="lm-orange" d="M200.52,42.7c-2.14,0-3.58-1.44-3.58-3.58v-4.32h-3.27v4.32c0,2.14-1.44,3.58-3.58,3.58h-1.83c-2.14,0-3.58-1.44-3.58-3.58v-17.07c0-2.14,1.44-3.58,3.58-3.58h1.83c2.14,0,3.58,1.44,3.58,3.58v4.49h3.27v-4.49c0-2.14,1.44-3.58,3.58-3.58h1.83c2.14,0,3.58,1.44,3.58,3.58v17.07c0,2.14-1.44,3.58-3.58,3.58h-1.83Z"/>
+      <path class="lm-orange" d="M217.32,43.04c-1.83,0-3.53-.33-5.08-.98-1.54-.65-2.89-1.55-4.01-2.69-1.12-1.14-1.99-2.49-2.6-4.02-.6-1.51-.91-3.16-.91-4.9s.31-3.32.91-4.81c.61-1.5,1.48-2.83,2.6-3.95,1.12-1.12,2.47-2.01,4.02-2.63,1.54-.62,3.24-.94,5.05-.94s3.52.32,5.05.94c1.54.63,2.9,1.51,4.02,2.63,1.12,1.12,2,2.45,2.6,3.95.6,1.49.91,3.11.91,4.81s-.3,3.39-.91,4.9c-.61,1.53-1.48,2.88-2.6,4.02-1.12,1.14-2.47,2.05-4.01,2.69-1.54.65-3.25.98-5.08.98ZM217.32,26.7c-.51,0-.96.09-1.37.27s-.75.42-1.04.73c-.31.33-.54.72-.72,1.18-.18.47-.27.99-.27,1.57,0,.62.09,1.19.28,1.69.19.5.43.91.74,1.26.3.33.64.59,1.06.78.4.19.84.28,1.33.28s.93-.09,1.33-.28c.42-.2.77-.45,1.06-.78.31-.35.55-.76.74-1.26.19-.5.28-1.07.28-1.69,0-.58-.09-1.09-.27-1.57-.18-.47-.42-.85-.72-1.18-.29-.31-.63-.55-1.05-.73-.41-.18-.86-.27-1.37-.27Z"/>
+      <path class="lm-orange" d="M238.99,43.04c-1.51,0-2.92-.24-4.19-.7-1.29-.48-2.42-1.16-3.35-2.03-.94-.88-1.68-1.94-2.19-3.14-.51-1.2-.77-2.51-.77-3.91v-11.2c0-2.14,1.44-3.58,3.58-3.58h1.83c2.14,0,3.58,1.44,3.58,3.58v11.2c0,.31.04.72.24.89.25.21.66.32,1.22.32s.98-.11,1.22-.32c.2-.17.24-.58.24-.89v-11.2c0-2.14,1.44-3.58,3.58-3.58h1.83c2.14,0,3.58,1.44,3.58,3.58v11.2c0,1.4-.26,2.72-.77,3.92-.51,1.21-1.25,2.26-2.19,3.14-.93.87-2.05,1.55-3.33,2.03-1.26.47-2.66.71-4.15.71Z"/>
+      <path class="lm-orange" d="M257.14,43.04c-.85,0-1.67-.08-2.45-.24-.74-.15-1.45-.34-2.08-.57-.65-.23-1.25-.49-1.77-.77-.55-.29-1-.57-1.36-.86-.25-.19-.51-.44-.73-.71-.29-.36-.5-.78-.62-1.23-.13-.5-.14-1.02-.02-1.54.11-.48.33-.94.68-1.44l.86-1.25c.76-1.12,1.68-1.46,2.32-1.55.06,0,.11-.01.17-.02-.23-.15-.46-.31-.68-.47-.86-.64-1.59-1.43-2.16-2.35-.65-1.03-.97-2.28-.97-3.72,0-1.23.25-2.37.75-3.41.49-1.01,1.17-1.9,2.02-2.63.84-.71,1.84-1.27,2.97-1.64,1.09-.36,2.26-.54,3.49-.54,1.4,0,2.71.2,3.89.6,1.17.39,2.06.81,2.71,1.26,1.11.81,1.46,1.7,1.56,2.32.13.78-.01,1.58-.41,2.38l-.68,1.34c-.8,1.55-1.93,1.89-2.61,1.93.38.22.74.45,1.09.71.87.63,1.6,1.42,2.18,2.34.65,1.03.97,2.28.97,3.72,0,1.11-.21,2.18-.62,3.18-.42,1.03-1.04,1.94-1.85,2.71-.8.76-1.77,1.36-2.9,1.8-1.12.43-2.38.64-3.75.64Z"/>
+      <path class="lm-orange" d="M268.65,42.7c-2.14,0-3.58-1.44-3.58-3.58v-17.07c0-2.14,1.44-3.58,3.58-3.58h9.54c2.14,0,3.58,1.44,3.58,3.58v1.13c0,2.07-1.35,3.49-3.37,3.58,1.13.57,1.82,1.71,1.82,3.19v1.13c0,1.61-.81,2.83-2.13,3.33h.49c2.14,0,3.58,1.44,3.58,3.58v1.13c0,2.14-1.44,3.58-3.58,3.58h-9.93Z"/>
+      <!-- LIGHTHOUSE wordmark — main text layer (DARK for light mode) -->
+      <path class="lm-dark" d="M102.59,22.04c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v14.39h6.69c1.03,0,1.55.52,1.55,1.55v1.13c0,1.03-.52,1.55-1.55,1.55h-10.08c-1.04,0-1.55-.52-1.55-1.55v-17.07Z"/>
+      <path class="lm-dark" d="M117.81,22.04c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v17.07c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.04,0-1.55-.52-1.55-1.55v-17.07Z"/>
+      <path class="lm-dark" d="M125.6,30.71c0-1.54.26-2.96.79-4.25.53-1.29,1.26-2.4,2.2-3.33.94-.93,2.06-1.66,3.36-2.19,1.3-.53,2.72-.79,4.26-.79.81,0,1.57.07,2.27.2.71.13,1.34.29,1.91.47.56.18,1.05.37,1.45.58.4.21.71.39.92.54.43.32.67.65.72.99.05.34-.06.72-.32,1.16l-.73,1.16c-.26.43-.57.67-.92.72-.35.05-.76-.05-1.23-.3-.47-.24-.99-.47-1.57-.68-.57-.21-1.3-.31-2.19-.31-1.02,0-1.89.16-2.61.47-.72.31-1.33.73-1.81,1.27s-.83,1.15-1.06,1.85c-.23.7-.34,1.42-.34,2.17,0,.94.16,1.78.47,2.53.31.74.72,1.38,1.24,1.9.52.53,1.12.93,1.82,1.21.7.28,1.43.42,2.2.42.71,0,1.34-.08,1.86-.25.53-.17.96-.36,1.3-.56.4-.23.72-.5.99-.82v-1.38h-1.3c-1.04,0-1.55-.52-1.55-1.55v-1.1c0-1.03.52-1.55,1.55-1.55h4.12c1.03,0,1.55.52,1.55,1.55v8.3c0,1.03-.52,1.55-1.55,1.55h-.93c-.51,0-.89-.12-1.16-.35-.26-.24-.4-.52-.4-.86v-.25s0-.07.03-.08h-.06c-.36.36-.8.68-1.33.96-.45.24-1.01.46-1.68.65-.67.19-1.45.28-2.36.28-1.3,0-2.54-.24-3.74-.72-1.2-.48-2.25-1.16-3.18-2.05-.92-.88-1.66-1.97-2.2-3.25-.55-1.28-.82-2.71-.82-4.29Z"/>
+      <path class="lm-dark" d="M148.06,22.04c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v6.52h7.34v-6.52c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v17.07c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.04,0-1.55-.52-1.55-1.55v-6.35h-7.34v6.35c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.04,0-1.55-.52-1.55-1.55v-17.07Z"/>
+      <path class="lm-dark" d="M173.52,24.72h-4.57c-1.03,0-1.55-.52-1.55-1.55v-1.13c0-1.03.52-1.55,1.55-1.55h14.08c1.03,0,1.55.52,1.55,1.55v1.13c0,1.04-.52,1.55-1.55,1.55h-4.57v14.39c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.03,0-1.55-.52-1.55-1.55v-14.39Z"/>
+      <path class="lm-dark" d="M186.69,22.04c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v6.52h7.34v-6.52c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v17.07c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.04,0-1.55-.52-1.55-1.55v-6.35h-7.34v6.35c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.03,0-1.55-.52-1.55-1.55v-17.07Z"/>
+      <path class="lm-dark" d="M206.76,30.45c0-1.45.25-2.8.76-4.05.51-1.25,1.23-2.34,2.16-3.27s2.05-1.66,3.34-2.19c1.3-.53,2.73-.79,4.29-.79s2.99.26,4.29.79c1.3.53,2.41,1.26,3.34,2.19s1.65,2.02,2.16,3.27c.51,1.25.76,2.6.76,4.05s-.25,2.87-.76,4.15c-.51,1.28-1.23,2.39-2.16,3.34-.93.95-2.05,1.7-3.34,2.24-1.3.55-2.73.82-4.29.82s-2.99-.27-4.29-.82c-1.3-.55-2.41-1.29-3.34-2.24-.93-.95-1.65-2.06-2.16-3.34-.51-1.28-.76-2.66-.76-4.15ZM211.87,30.45c0,.87.14,1.67.41,2.4.27.73.65,1.37,1.13,1.9.48.54,1.05.96,1.72,1.27.67.31,1.4.47,2.19.47s1.52-.16,2.19-.47c.67-.31,1.24-.73,1.72-1.27s.86-1.17,1.13-1.9c.27-.73.41-1.53.41-2.4s-.14-1.59-.41-2.3c-.27-.71-.65-1.32-1.13-1.83-.48-.52-1.05-.92-1.72-1.21-.67-.29-1.4-.44-2.19-.44s-1.52.15-2.19.44c-.67.29-1.24.7-1.72,1.21-.48.52-.86,1.13-1.13,1.83-.27.71-.41,1.47-.41,2.3Z"/>
+      <path class="lm-dark" d="M230.52,22.04c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v11.2c0,1.07.31,1.88.95,2.43.63.55,1.48.82,2.55.82s1.92-.27,2.55-.82c.63-.55.95-1.35.95-2.43v-11.2c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v11.2c0,1.13-.2,2.17-.61,3.12-.4.95-.97,1.77-1.71,2.46-.73.69-1.62,1.22-2.65,1.61-1.03.39-2.18.58-3.44.58s-2.44-.19-3.49-.58c-1.04-.39-1.93-.92-2.67-1.61-.73-.69-1.3-1.51-1.71-2.46-.4-.95-.61-1.99-.61-3.12v-11.2Z"/>
+      <path class="lm-dark" d="M250.73,39.01c-.15-.11-.28-.24-.4-.38-.11-.14-.19-.3-.24-.48-.05-.18-.05-.37,0-.58.05-.21.16-.44.35-.71l.88-1.27c.28-.41.59-.64.93-.69.34-.05.74.06,1.21.32.17.09.37.21.61.34.24.13.51.27.82.41.31.14.65.26,1.03.35.38.09.78.14,1.21.14.73,0,1.27-.14,1.62-.41.35-.27.52-.61.52-1,0-.47-.22-.87-.66-1.2-.44-.33-.99-.64-1.65-.93-.66-.29-1.37-.6-2.15-.93-.77-.33-1.49-.74-2.14-1.23-.66-.49-1.21-1.09-1.65-1.79-.44-.71-.66-1.58-.66-2.64,0-.92.18-1.76.55-2.53s.87-1.42,1.51-1.96c.64-.55,1.4-.96,2.29-1.26.88-.29,1.83-.44,2.85-.44,1.19,0,2.27.16,3.25.49.98.33,1.71.66,2.2,1,.41.3.65.63.71.97.06.35-.02.73-.23,1.14l-.68,1.33c-.28.55-.61.82-.97.83-.37,0-.75-.09-1.14-.3-.47-.23-.96-.44-1.45-.64-.5-.2-1.08-.3-1.74-.3-.79,0-1.35.14-1.69.41-.34.27-.51.61-.51,1,0,.49.22.89.66,1.21.44.32.99.62,1.65.9.66.28,1.37.58,2.15.89.77.31,1.49.71,2.14,1.19.66.48,1.21,1.07,1.65,1.78.44.71.66,1.59.66,2.64,0,.85-.16,1.65-.47,2.41-.31.76-.77,1.43-1.37,2-.6.57-1.35,1.03-2.23,1.37-.88.34-1.89.51-3.02.51-.72,0-1.4-.07-2.05-.2-.65-.13-1.25-.3-1.81-.49-.56-.2-1.05-.41-1.5-.65-.44-.24-.8-.46-1.06-.66Z"/>
+      <path class="lm-dark" d="M267.1,22.04c0-1.03.52-1.55,1.55-1.55h9.54c1.03,0,1.55.52,1.55,1.55v1.13c0,1.04-.52,1.55-1.55,1.55h-6.15v3.67h4.6c1.03,0,1.55.52,1.55,1.55v1.13c0,1.03-.52,1.55-1.55,1.55h-4.6v3.81h6.55c1.03,0,1.55.52,1.55,1.55v1.13c0,1.03-.52,1.55-1.55,1.55h-9.93c-1.03,0-1.55-.52-1.55-1.55v-17.07Z"/>
+      <!-- Tagline "Creative Agency" (orange) -->
+      <path class="lm-tag" d="M102.09,55.37c0-1.47.25-2.82.75-4.05.5-1.23,1.19-2.3,2.07-3.2.88-.9,1.93-1.61,3.15-2.12,1.21-.51,2.54-.76,3.99-.76,1.2,0,2.4.19,3.6.58,1.19.39,2.22.9,3.06,1.54.3.28.34.61.11.99l-.25.37c-.26.36-.58.4-.96.11-.79-.55-1.67-.97-2.64-1.28-.97-.31-1.92-.47-2.86-.47-1.17,0-2.24.2-3.22.61-.98.4-1.82.97-2.53,1.71-.71.73-1.26,1.61-1.65,2.62-.4,1.02-.59,2.13-.59,3.33s.2,2.39.61,3.44c.4,1.05.96,1.96,1.68,2.72.71.76,1.57,1.35,2.55,1.78s2.06.64,3.23.64c1.02,0,2.04-.19,3.08-.56,1.03-.38,1.98-.9,2.82-1.58.36-.28.68-.25.96.08l.25.31c.26.36.24.69-.06.99-.96.81-2.07,1.44-3.34,1.9-1.27.46-2.53.69-3.77.69-1.47,0-2.81-.26-4.04-.78-1.22-.52-2.28-1.24-3.17-2.16-.89-.92-1.59-2.02-2.09-3.29-.5-1.27-.75-2.66-.75-4.16Z"/>
+      <path class="lm-tag" d="M123.45,46.28c0-.47.23-.71.68-.71h5.36c.85,0,1.55.04,2.12.13.56.08,1.06.23,1.5.44.94.45,1.67,1.11,2.17,1.98.51.87.76,1.86.76,2.99,0,1.35-.34,2.53-1.03,3.51-.69.99-1.59,1.64-2.72,1.96v.06c.04.06.1.16.18.3.08.14.19.31.32.49l3.87,7.17c.13.26.15.47.06.61-.09.14-.27.21-.54.21h-.73c-.4,0-.67-.16-.82-.48l-4.23-7.87h-5v7.65c0,.47-.23.71-.68.71h-.59c-.45,0-.68-.24-.68-.71v-18.43ZM130.11,55.31c1.19,0,2.14-.38,2.85-1.13.71-.75,1.07-1.76,1.07-3.02,0-.79-.18-1.49-.55-2.1-.37-.61-.88-1.07-1.54-1.37-.32-.13-.67-.23-1.04-.28-.38-.06-.89-.08-1.55-.08h-3.95v7.99h4.71Z"/>
+      <path class="lm-tag" d="M140.64,46.28c0-.47.23-.71.68-.71h9.79c.47,0,.71.24.71.71v.34c0,.47-.24.71-.71.71h-8.52v7.22h6.83c.47,0,.71.23.71.68v.37c0,.47-.24.71-.71.71h-6.83v7.37h9.03c.47,0,.71.24.71.71v.34c0,.47-.24.71-.71.71h-10.3c-.45,0-.68-.24-.68-.71v-18.43Z"/>
+      <path class="lm-tag" d="M160.84,46.14c.09-.38.35-.56.76-.56h.93c.4,0,.65.19.76.56l6.83,18.46c.15.55-.04.82-.56.82h-.62c-.45,0-.72-.19-.79-.56l-2.12-5.76h-7.96l-2.09,5.76c-.11.38-.38.56-.79.56h-.59c-.56,0-.76-.27-.59-.82l6.83-18.46ZM165.47,57.4l-2.62-7.2c-.13-.34-.26-.76-.4-1.27-.13-.51-.24-.95-.34-1.33h-.06c-.09.38-.22.82-.37,1.33-.15.51-.28.93-.4,1.27l-2.65,7.2h6.83Z"/>
+      <path class="lm-tag" d="M176.14,47.33h-6.41c-.47,0-.71-.24-.71-.71v-.34c0-.47.24-.71.71-.71h14.79c.47,0,.71.24.71.71v.34c0,.47-.24.71-.71.71h-6.43v17.38c0,.47-.23.71-.68.71h-.56c-.47,0-.71-.24-.71-.71v-17.38Z"/>
+      <path class="lm-tag" d="M188.16,46.28c0-.47.23-.71.68-.71h.59c.45,0,.68.24.68.71v18.43c0,.47-.23.71-.68.71h-.59c-.45,0-.68-.24-.68-.71v-18.43Z"/>
+      <path class="lm-tag" d="M193.39,46.4c-.21-.55-.02-.82.56-.82h.65c.41,0,.68.19.79.56l5.28,14.51c.13.38.27.82.41,1.33.14.51.26.92.35,1.24h.06c.09-.32.21-.73.35-1.24.14-.51.28-.95.41-1.33l5.33-14.51c.09-.38.35-.56.76-.56h.68c.53,0,.72.27.56.82l-6.86,18.46c-.13.38-.4.56-.79.56h-.93c-.43,0-.69-.19-.76-.56l-6.86-18.46Z"/>
+      <path class="lm-tag" d="M212.86,46.28c0-.47.23-.71.68-.71h9.79c.47,0,.71.24.71.71v.34c0,.47-.24.71-.71.71h-8.52v7.22h6.83c.47,0,.71.23.71.68v.37c0,.47-.24.71-.71.71h-6.83v7.37h9.03c.47,0,.71.24.71.71v.34c0,.47-.24.71-.71.71h-10.3c-.45,0-.68-.24-.68-.71v-18.43Z"/>
+    </svg>
+  </a>
+  <ul class="nav-links">
+    <li><a href="lighthouse-tentang.html">Tentang</a></li>
+    <li><a href="lighthouse-layanan.html">Layanan</a></li>
+    <li><a href="lighthouse-portfolio.html">Portfolio</a></li>
+    <li><a href="lighthouse-kontak.html">Kontak</a></li>
+  </ul>
+  <a href="lighthouse-kontak.html" class="btn btn-primary nav-cta">Mulai Proyek ↗</a>
+</nav>
+
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-grain"></div>
+
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">Digital Agency · Est. 2019</div>
+      <h1 class="hero-title">
+        Kami Membangun
+        <span class="hero-serif">pengalaman digital</span>
+      </h1>
+      <p class="hero-sub">
+        Kami hadir untuk menciptakan website yang terasa <strong>crafted</strong>, bukan sekadar dibuat —
+        untuk bisnis yang peduli pada desain dan dampak nyata.
+      </p>
+      <div class="hero-actions">
+        <a href="#inquiry" class="btn btn-primary">Mulai Proyek →</a>
+        <a href="lighthouse-portfolio.html" class="btn btn-outline">Lihat Portfolio</a>
+      </div>
+    </div>
+  </div><!-- end hero-inner -->
+
+  <div class="hero-scroll">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 5v14M5 12l7 7 7-7"/>
+    </svg>
+    scroll
+  </div>
+</section>
+
+
+
+
+<!-- ═══════════════════ STATS BAR ═══════════════════ -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-number">120+</div>
+    <div class="stat-label">Proyek Selesai</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">80+</div>
+    <div class="stat-label">Klien Puas</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">5+</div>
+    <div class="stat-label">Tahun Berdiri</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">98%</div>
+    <div class="stat-label">Repeat Client</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════ SERVICES ═══════════════════ -->
+<section class="services" id="services">
+  <div class="section-header">
+    <span class="label">Layanan Kami</span>
+    <h2 class="section-title">Solusi Digital<br/>End-to-End</h2>
+    <p class="section-sub">Dari strategi hingga eksekusi, kami memberikan layanan digital lengkap yang dirancang khusus untuk kebutuhan bisnis Anda.</p>
+  </div>
+  <div class="services-grid" id="services-grid">
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <div class="service-name">Web Development</div>
+      <div class="service-desc">Website dan aplikasi web modern yang cepat, responsif, dan mudah dikelola. Dibangun dengan teknologi terkini untuk performa optimal.</div>
+      <div class="service-arrow">↗</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+      </div>
+      <div class="service-name">UI/UX Design</div>
+      <div class="service-desc">Desain antarmuka yang intuitif dan visual yang menarik. Kami merancang pengalaman pengguna yang membuat audiens betah dan konversi meningkat.</div>
+      <div class="service-arrow">↗</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="service-name">Brand Identity</div>
+      <div class="service-desc">Logo, color palette, tipografi, dan panduan brand yang konsisten. Kami membantu bisnis Anda tampil profesional di setiap touchpoint.</div>
+      <div class="service-arrow">↗</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="service-name">Digital Strategy</div>
+      <div class="service-desc">Strategi digital berbasis data untuk pertumbuhan bisnis jangka panjang. SEO, content marketing, dan analitik dalam satu roadmap terintegrasi.</div>
+      <div class="service-arrow">↗</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <div class="service-name">CMS & Sistem Internal</div>
+      <div class="service-desc">Dashboard admin dan CMS yang mudah digunakan tanpa coding. Tim Anda dapat memperbarui konten dan mengelola leads secara mandiri.</div>
+      <div class="service-arrow">↗</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      </div>
+      <div class="service-name">Maintenance & Support</div>
+      <div class="service-desc">Dukungan teknis berkelanjutan pasca-launch. Update rutin, monitoring performa, dan respons cepat memastikan sistem selalu optimal.</div>
+      <div class="service-arrow">↗</div>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      </div>
+      <div class="service-name">E-Commerce Development</div>
+      <div class="service-desc">Toko online yang siap berjualan — produk, keranjang, checkout, dan manajemen order terintegrasi dalam satu platform yang mudah dikelola.</div>
+      <div class="service-arrow">↗</div>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      </div>
+      <div class="service-name">Social Media & Content</div>
+      <div class="service-desc">Konten visual dan copy yang konsisten dengan brand untuk platform sosial. Dari desain feed hingga content calendar bulanan yang terencana.</div>
+      <div class="service-arrow">↗</div>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      </div>
+      <div class="service-name">Video & Motion Design</div>
+      <div class="service-desc">Konten video pendek, animasi explainer, dan motion graphic untuk iklan digital, presentasi, maupun kampanye media sosial yang impactful.</div>
+      <div class="service-arrow">↗</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ PORTFOLIO ═══════════════════ -->
+<section class="portfolio" id="portfolio">
+  <div class="section-header" style="display:flex; flex-direction:row; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:1.5rem; margin-bottom:2.5rem;">
+    <div>
+      <span class="label">Portfolio</span>
+      <h2 class="section-title" style="margin-top:.5rem;">Proyek Pilihan</h2>
+    </div>
+    <a href="lighthouse-portfolio.html" class="btn btn-outline" style="flex-shrink:0;">Lihat Semua →</a>
+  </div>
+
+  <div class="portfolio-grid" id="portfolioGrid">
+
+    <!-- Card 1 — Large featured -->
+    <div class="project-card">
+      <div class="project-thumb-wrapper">
+        <div class="project-thumb-placeholder" style="background: linear-gradient(135deg, #1a0a05 0%, #6b1a08 40%, #fc4615 100%);">
+          <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <span class="project-cat-badge">Web Development</span>
+      </div>
+      <div class="project-body">
+        <div class="project-cat">Web Development</div>
+        <div class="project-title">Platform E-Commerce Fashion Lokal</div>
+        <p class="project-desc">Membangun platform belanja online end-to-end untuk brand fashion lokal — dari manajemen produk, checkout, hingga dashboard penjual terintegrasi.</p>
+        <div class="project-meta">
+          <span class="project-year">2025</span>
+          <div class="project-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="project-card">
+      <div class="project-thumb-wrapper">
+        <div class="project-thumb-placeholder" style="background: linear-gradient(135deg, #041a0d 0%, #0a6b30 40%, #20c97a 100%);">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <span class="project-cat-badge">Branding</span>
+      </div>
+      <div class="project-body">
+        <div class="project-cat">Branding</div>
+        <div class="project-title">Brand Identity Fintech Startup</div>
+        <p class="project-desc">Membangun identitas visual yang modern dan terpercaya — logo sistem, palet warna, tipografi, dan brand guideline lengkap untuk produk finansial digital.</p>
+        <div class="project-meta">
+          <span class="project-year">2025</span>
+          <div class="project-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="project-card">
+      <div class="project-thumb-wrapper">
+        <div class="project-thumb-placeholder" style="background: linear-gradient(135deg, #0d0420 0%, #3a1a8c 45%, #6c63ff 100%);">
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        </div>
+        <span class="project-cat-badge">UI/UX Design</span>
+      </div>
+      <div class="project-body">
+        <div class="project-cat">UI/UX Design</div>
+        <div class="project-title">Mobile Banking App Redesign</div>
+        <p class="project-desc">Redesain antarmuka aplikasi mobile banking agar lebih intuitif dan meningkatkan kepercayaan pengguna terhadap produk finansial.</p>
+        <div class="project-meta">
+          <span class="project-year">2024</span>
+          <div class="project-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="project-card">
+      <div class="project-thumb-wrapper">
+        <div class="project-thumb-placeholder" style="background: linear-gradient(135deg, #1a0f00 0%, #8c5200 45%, #f5a623 100%);">
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <span class="project-cat-badge">Digital Strategy</span>
+      </div>
+      <div class="project-body">
+        <div class="project-cat">Digital Strategy</div>
+        <div class="project-title">SEO &amp; Content F&amp;B Chain</div>
+        <p class="project-desc">Strategi konten dan SEO yang mendorong pertumbuhan trafik organik hingga 3× dan meningkatkan brand awareness rantai restoran nasional.</p>
+        <div class="project-meta">
+          <span class="project-year">2024</span>
+          <div class="project-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="project-card">
+      <div class="project-thumb-wrapper">
+        <div class="project-thumb-placeholder" style="background: linear-gradient(135deg, #001a1f 0%, #005a6b 45%, #00b8d4 100%);">
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <span class="project-cat-badge">Web Dev + CMS</span>
+      </div>
+      <div class="project-body">
+        <div class="project-cat">Web Dev + CMS</div>
+        <div class="project-title">Company Profile Konstruksi</div>
+        <p class="project-desc">Website profil perusahaan konstruksi dengan CMS kustom, portofolio proyek interaktif, dan sistem penawaran harga terintegrasi.</p>
+        <div class="project-meta">
+          <span class="project-year">2024</span>
+          <div class="project-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════ PROCESS ═══════════════════ -->
+<section class="process" id="process">
+  <div class="section-header centered">
+    <span class="label">Cara Kami Bekerja</span>
+    <h2 class="section-title">Proses yang Terstruktur,<br/>Hasil yang Terukur</h2>
+    <p class="section-sub">Setiap proyek dijalankan melalui tahapan yang jelas sehingga Anda selalu tahu apa yang sedang terjadi.</p>
+  </div>
+  <div class="process-steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-name">Discovery</div>
+      <div class="step-desc">Memahami bisnis, tujuan, dan tantangan Anda melalui sesi brief mendalam sebelum satu baris pun ditulis.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-name">Strategy</div>
+      <div class="step-desc">Menyusun roadmap proyek, struktur konten, dan pendekatan desain berdasarkan riset pengguna dan kompetitor.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-name">Design</div>
+      <div class="step-desc">Wireframe, prototipe interaktif, dan desain visual yang mengutamakan pengalaman pengguna dan identitas brand.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-name">Development</div>
+      <div class="step-desc">Build dengan kode bersih, performa tinggi, dan mudah dikelola. Testing dilakukan di setiap milestone.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">05</div>
+      <div class="step-name">Launch</div>
+      <div class="step-desc">Deploy, QA final, dan handover lengkap disertai pelatihan tim serta dokumentasi untuk kemandirian klien.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">06</div>
+      <div class="step-name">Support</div>
+      <div class="step-desc">Monitoring pasca-launch, update berkala, dan dukungan teknis responsif agar sistem selalu berjalan optimal.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ TESTIMONIALS ═══════════════════ -->
+<section class="testimonials" id="testimonials">
+  <div class="section-header centered">
+    <span class="label">Kata Klien Kami</span>
+    <h2 class="section-title">Dipercaya oleh<br/>Berbagai Bisnis</h2>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <p class="testi-text">Lighthouse benar-benar mengubah cara kami berhubungan dengan calon klien secara digital. Website baru kami mendapat pujian dari banyak pihak, dan inquiry masuk meningkat signifikan sejak launch.</p>
+      <div class="testi-author">
+        <div class="testi-avatar">AR</div>
+        <div>
+          <div class="testi-name">Andi Rachman</div>
+          <div class="testi-role">CEO · Nusantara Property Group</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <p class="testi-text">Proses kerja tim Lighthouse sangat terstruktur dan komunikasi lancar. Mereka tidak hanya delivery desain yang cantik, tapi juga memastikan semua kebutuhan bisnis kami terpenuhi.</p>
+      <div class="testi-author">
+        <div class="testi-avatar">SW</div>
+        <div>
+          <div class="testi-name">Siti Wahyuni</div>
+          <div class="testi-role">Marketing Director · BrightPath Edu</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <p class="testi-text">Kami sudah bekerja sama dengan Lighthouse untuk 3 proyek berturut-turut. Konsistensi kualitas dan kemampuan mereka memahami visi bisnis kami adalah alasan kami terus kembali.</p>
+      <div class="testi-author">
+        <div class="testi-avatar">BH</div>
+        <div>
+          <div class="testi-name">Budi Hartono</div>
+          <div class="testi-role">Founder · Kopi Kencana</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ CTA / INQUIRY ═══════════════════ -->
+<section class="cta-section" id="inquiry">
+  <div class="cta-pattern"></div>
+  <div style="position:relative; z-index:1;">
+    <span class="label">Mulai Sekarang</span>
+    <h2 class="section-title">Siap Membawa Bisnis Anda<br/>ke Level Berikutnya?</h2>
+    <p class="section-sub">Ceritakan kebutuhan Anda kepada kami. Konsultasi pertama gratis, tanpa komitmen.</p>
+    <form class="inquiry-form" id="inquiry-form">
+      <div class="form-row">
+        <input class="form-input" type="text" placeholder="Nama Anda *" required />
+        <input class="form-input" type="text" placeholder="Perusahaan" />
+      </div>
+      <input class="form-input" type="email" placeholder="Email *" required />
+      <select class="form-input">
+        <option value="" disabled selected>Jenis Layanan yang Dibutuhkan</option>
+        <option>Web Development</option>
+        <option>UI/UX Design</option>
+        <option>Brand Identity</option>
+        <option>Digital Strategy</option>
+        <option>CMS & Sistem Internal</option>
+        <option>Lainnya</option>
+      </select>
+      <textarea class="form-input" placeholder="Ceritakan kebutuhan proyek Anda..." rows="4" style="resize:vertical;"></textarea>
+      <button type="submit" class="form-submit">Kirim Inquiry →</button>
+    </form>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <a href="#" class="footer-logo">
+    <!-- Footer logo: mark (orange+white icon) + dark wordmark -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 282.17 83.2">
+      <defs><style>.fl-o{fill:#fc4615}.fl-w{fill:#fff}.fl-d{fill:#111}</style></defs>
+      <circle class="fl-o" cx="41.6" cy="41.6" r="41.6"/>
+      <path class="fl-w" d="M65.79,42.77c-.06.62-.11,1.24-.17,1.86-.02.2-.05.4-.08.62-.47.03-.93.07-1.38.09-2.58.11-5.17.21-7.75.33-.72.03-1.46.02-2.16.19-1.37.32-2.26,1.22-2.6,2.57-.34,1.36.07,2.53,1.07,3.51,2.18,2.15,4.35,4.3,6.53,6.45.04.03.06.08.13.16-.44.42-.87.85-1.33,1.3-.52-.48-1.04-.94-1.55-1.42-2.45-2.25-4.9-4.49-7.33-6.77-1.06-1-1.84-2.2-2.12-3.68-.81-4.26,1.84-7.86,5.69-8.53.9-.16,1.83-.14,2.74-.18,2.79-.12,5.57-.24,8.36-.35.56-.02,1.11,0,1.73,0,.08.86.16,1.74.24,2.63v1.22Z"/>
+      <path class="fl-w" d="M19.81,31.41c.97-1.95,2.15-3.71,3.59-5.33.87.57,1.72,1.13,2.57,1.69,2.3,1.52,4.58,3.04,6.89,4.54,1.21.78,2.48.81,3.72.08,1.22-.72,1.83-1.84,1.75-3.25-.05-.87-.26-1.73-.4-2.6-.44-2.68-.88-5.37-1.32-8.05,0-.01,0-.02.04-.09.49-.08,1.01-.16,1.53-.25.23-.04.26.1.3.29.58,2.88,1.17,5.75,1.74,8.63.28,1.41.58,2.81.8,4.23.65,4.17-2.52,7.54-5.89,8.02-1.89.27-3.6-.13-5.19-1.19-3.21-2.15-6.43-4.27-9.65-6.4-.15-.1-.29-.2-.48-.32Z"/>
+      <path class="fl-w" d="M51.74,20.18c-.18.65-.35,1.3-.52,1.95-.82,2.95-1.64,5.9-2.45,8.86-.63,2.29,1.08,4.56,3.43,4.5.55-.01,1.14-.18,1.64-.42,2.9-1.46,5.77-2.97,8.66-4.45.08-.04.16-.08.29-.13.27.55.54,1.09.83,1.66-.78.44-1.52.86-2.26,1.28-2.82,1.59-5.63,3.19-8.46,4.75-1.24.69-2.56,1.16-4.01,1.06-4.08-.28-6.44-3.21-6.81-6.2-.16-1.25.1-2.42.43-3.61.99-3.52,1.97-7.05,2.95-10.58.16-.59.16-.59.76-.47,1.83.35,3.6.91,5.29,1.69.07.03.13.07.23.12Z"/>
+      <path class="fl-w" d="M24.73,59.58c-1.56-1.49-2.87-3.14-3.99-5,.1-.09.2-.18.3-.27,2.66-2.12,5.32-4.25,7.98-6.36,1.24-.99,1.71-2.26,1.33-3.79-.35-1.44-1.57-2.4-3.13-2.63-2.8-.41-5.6-.85-8.41-1.28-.45-.07-.9-.13-1.41-.21.07-.62.14-1.21.21-1.84.79.09,1.55.17,2.3.26,1.68.19,3.36.37,5.04.58,2.09.26,4.2.47,6.27.85,3.23.6,5.14,3.74,5.34,6.11.21,2.55-.63,4.66-2.62,6.27-2.98,2.41-6,4.78-9,7.16-.06.05-.12.09-.21.15Z"/>
+      <path class="fl-w" d="M31.98,64.42c-.56-.27-1.11-.53-1.68-.81.45-.99.89-1.95,1.33-2.91,1.24-2.7,2.47-5.41,3.73-8.11,1.05-2.24,2.79-3.61,5.23-4.09,3.35-.65,6.71,1.23,7.9,4.44,1.3,3.48,2.59,6.96,3.89,10.43.08.22.13.37-.16.51-1.73.83-3.52,1.47-5.38,1.9-.31.07-.43,0-.55-.3-1.14-3.06-2.29-6.12-3.44-9.18-.56-1.48-1.62-2.35-3.2-2.44-1.56-.08-2.71.67-3.41,2.07-1.36,2.71-2.72,5.41-4.08,8.12-.06.11-.12.22-.2.36Z"/>
+      <path class="fl-d" d="M102.59,22.04c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v14.39h6.69c1.03,0,1.55.52,1.55,1.55v1.13c0,1.03-.52,1.55-1.55,1.55h-10.08c-1.04,0-1.55-.52-1.55-1.55v-17.07Z"/>
+      <path class="fl-d" d="M117.81,22.04c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v17.07c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.04,0-1.55-.52-1.55-1.55v-17.07Z"/>
+      <path class="fl-d" d="M125.6,30.71c0-1.54.26-2.96.79-4.25.53-1.29,1.26-2.4,2.2-3.33.94-.93,2.06-1.66,3.36-2.19,1.3-.53,2.72-.79,4.26-.79.81,0,1.57.07,2.27.2.71.13,1.34.29,1.91.47.56.18,1.05.37,1.45.58.4.21.71.39.92.54.43.32.67.65.72.99.05.34-.06.72-.32,1.16l-.73,1.16c-.26.43-.57.67-.92.72-.35.05-.76-.05-1.23-.3-.47-.24-.99-.47-1.57-.68-.57-.21-1.3-.31-2.19-.31-1.02,0-1.89.16-2.61.47-.72.31-1.33.73-1.81,1.27s-.83,1.15-1.06,1.85c-.23.7-.34,1.42-.34,2.17,0,.94.16,1.78.47,2.53.31.74.72,1.38,1.24,1.9.52.53,1.12.93,1.82,1.21.7.28,1.43.42,2.2.42.71,0,1.34-.08,1.86-.25.53-.17.96-.36,1.3-.56.4-.23.72-.5.99-.82v-1.38h-1.3c-1.04,0-1.55-.52-1.55-1.55v-1.1c0-1.03.52-1.55,1.55-1.55h4.12c1.03,0,1.55.52,1.55,1.55v8.3c0,1.03-.52,1.55-1.55,1.55h-.93c-.51,0-.89-.12-1.16-.35-.26-.24-.4-.52-.4-.86v-.25s0-.07.03-.08h-.06c-.36.36-.8.68-1.33.96-.45.24-1.01.46-1.68.65-.67.19-1.45.28-2.36.28-1.3,0-2.54-.24-3.74-.72-1.2-.48-2.25-1.16-3.18-2.05-.92-.88-1.66-1.97-2.2-3.25-.55-1.28-.82-2.71-.82-4.29Z"/>
+      <path class="fl-d" d="M148.06,22.04c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v6.52h7.34v-6.52c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v17.07c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.04,0-1.55-.52-1.55-1.55v-6.35h-7.34v6.35c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.04,0-1.55-.52-1.55-1.55v-17.07Z"/>
+      <path class="fl-d" d="M173.52,24.72h-4.57c-1.03,0-1.55-.52-1.55-1.55v-1.13c0-1.03.52-1.55,1.55-1.55h14.08c1.03,0,1.55.52,1.55,1.55v1.13c0,1.04-.52,1.55-1.55,1.55h-4.57v14.39c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.03,0-1.55-.52-1.55-1.55v-14.39Z"/>
+      <path class="fl-d" d="M186.69,22.04c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v6.52h7.34v-6.52c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v17.07c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.04,0-1.55-.52-1.55-1.55v-6.35h-7.34v6.35c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.03,0-1.55-.52-1.55-1.55v-17.07Z"/>
+      <path class="fl-d" d="M206.76,30.45c0-1.45.25-2.8.76-4.05.51-1.25,1.23-2.34,2.16-3.27s2.05-1.66,3.34-2.19c1.3-.53,2.73-.79,4.29-.79s2.99.26,4.29.79c1.3.53,2.41,1.26,3.34,2.19s1.65,2.02,2.16,3.27c.51,1.25.76,2.6.76,4.05s-.25,2.87-.76,4.15c-.51,1.28-1.23,2.39-2.16,3.34-.93.95-2.05,1.7-3.34,2.24-1.3.55-2.73.82-4.29.82s-2.99-.27-4.29-.82c-1.3-.55-2.41-1.29-3.34-2.24-.93-.95-1.65-2.06-2.16-3.34-.51-1.28-.76-2.66-.76-4.15ZM211.87,30.45c0,.87.14,1.67.41,2.4.27.73.65,1.37,1.13,1.9.48.54,1.05.96,1.72,1.27.67.31,1.4.47,2.19.47s1.52-.16,2.19-.47c.67-.31,1.24-.73,1.72-1.27s.86-1.17,1.13-1.9c.27-.73.41-1.53.41-2.4s-.14-1.59-.41-2.3c-.27-.71-.65-1.32-1.13-1.83-.48-.52-1.05-.92-1.72-1.21-.67-.29-1.4-.44-2.19-.44s-1.52.15-2.19.44c-.67.29-1.24.7-1.72,1.21-.48.52-.86,1.13-1.13,1.83-.27.71-.41,1.47-.41,2.3Z"/>
+      <path class="fl-d" d="M230.52,22.04c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v11.2c0,1.07.31,1.88.95,2.43.63.55,1.48.82,2.55.82s1.92-.27,2.55-.82c.63-.55.95-1.35.95-2.43v-11.2c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v11.2c0,1.13-.2,2.17-.61,3.12-.4.95-.97,1.77-1.71,2.46-.73.69-1.62,1.22-2.65,1.61-1.03.39-2.18.58-3.44.58s-2.44-.19-3.49-.58c-1.04-.39-1.93-.92-2.67-1.61-.73-.69-1.3-1.51-1.71-2.46-.4-.95-.61-1.99-.61-3.12v-11.2Z"/>
+      <path class="fl-d" d="M250.73,39.01c-.15-.11-.28-.24-.4-.38-.11-.14-.19-.3-.24-.48-.05-.18-.05-.37,0-.58.05-.21.16-.44.35-.71l.88-1.27c.28-.41.59-.64.93-.69.34-.05.74.06,1.21.32.17.09.37.21.61.34.24.13.51.27.82.41.31.14.65.26,1.03.35.38.09.78.14,1.21.14.73,0,1.27-.14,1.62-.41.35-.27.52-.61.52-1,0-.47-.22-.87-.66-1.2-.44-.33-.99-.64-1.65-.93-.66-.29-1.37-.6-2.15-.93-.77-.33-1.49-.74-2.14-1.23-.66-.49-1.21-1.09-1.65-1.79-.44-.71-.66-1.58-.66-2.64,0-.92.18-1.76.55-2.53s.87-1.42,1.51-1.96c.64-.55,1.4-.96,2.29-1.26.88-.29,1.83-.44,2.85-.44,1.19,0,2.27.16,3.25.49.98.33,1.71.66,2.2,1,.41.3.65.63.71.97.06.35-.02.73-.23,1.14l-.68,1.33c-.28.55-.61.82-.97.83-.37,0-.75-.09-1.14-.3-.47-.23-.96-.44-1.45-.64-.5-.2-1.08-.3-1.74-.3-.79,0-1.35.14-1.69.41-.34.27-.51.61-.51,1,0,.49.22.89.66,1.21.44.32.99.62,1.65.9.66.28,1.37.58,2.15.89.77.31,1.49.71,2.14,1.19.66.48,1.21,1.07,1.65,1.78.44.71.66,1.59.66,2.64,0,.85-.16,1.65-.47,2.41-.31.76-.77,1.43-1.37,2-.6.57-1.35,1.03-2.23,1.37-.88.34-1.89.51-3.02.51-.72,0-1.4-.07-2.05-.2-.65-.13-1.25-.3-1.81-.49-.56-.2-1.05-.41-1.5-.65-.44-.24-.8-.46-1.06-.66Z"/>
+      <path class="fl-d" d="M267.1,22.04c0-1.03.52-1.55,1.55-1.55h9.54c1.03,0,1.55.52,1.55,1.55v1.13c0,1.04-.52,1.55-1.55,1.55h-6.15v3.67h4.6c1.03,0,1.55.52,1.55,1.55v1.13c0,1.03-.52,1.55-1.55,1.55h-4.6v3.81h6.55c1.03,0,1.55.52,1.55,1.55v1.13c0,1.03-.52,1.55-1.55,1.55h-9.93c-1.03,0-1.55-.52-1.55-1.55v-17.07Z"/>
+      <path class="fl-o" d="M102.09,55.37c0-1.47.25-2.82.75-4.05.5-1.23,1.19-2.3,2.07-3.2.88-.9,1.93-1.61,3.15-2.12,1.21-.51,2.54-.76,3.99-.76,1.2,0,2.4.19,3.6.58,1.19.39,2.22.9,3.06,1.54.3.28.34.61.11.99l-.25.37c-.26.36-.58.4-.96.11-.79-.55-1.67-.97-2.64-1.28-.97-.31-1.92-.47-2.86-.47-1.17,0-2.24.2-3.22.61-.98.4-1.82.97-2.53,1.71-.71.73-1.26,1.61-1.65,2.62-.4,1.02-.59,2.13-.59,3.33s.2,2.39.61,3.44c.4,1.05.96,1.96,1.68,2.72.71.76,1.57,1.35,2.55,1.78s2.06.64,3.23.64c1.02,0,2.04-.19,3.08-.56,1.03-.38,1.98-.9,2.82-1.58.36-.28.68-.25.96.08l.25.31c.26.36.24.69-.06.99-.96.81-2.07,1.44-3.34,1.9-1.27.46-2.53.69-3.77.69-1.47,0-2.81-.26-4.04-.78-1.22-.52-2.28-1.24-3.17-2.16-.89-.92-1.59-2.02-2.09-3.29-.5-1.27-.75-2.66-.75-4.16Z"/>
+    </svg>
+  </a>
+  <ul class="footer-links">
+    <li><a href="lighthouse-tentang.html">Tentang</a></li>
+    <li><a href="lighthouse-layanan.html">Layanan</a></li>
+    <li><a href="lighthouse-portfolio.html">Portfolio</a></li>
+    <li><a href="lighthouse-kontak.html">Kontak</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 Lighthouse Creative Agency. All rights reserved.</div>
+</footer>
+
+
+<script>
+  // Nav shadow on scroll
+  const nav = document.querySelector('.nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Portfolio filter
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Inquiry form submit
+  document.getElementById('inquiry-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-submit');
+    btn.textContent = '✓ Inquiry terkirim! Kami akan menghubungi Anda segera.';
+    btn.style.background = '#111';
+    btn.style.color = '#fff';
+    btn.disabled = true;
+  });
+
+  // Counter animation on stats
+  const counters = document.querySelectorAll('.stat-number');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const text = el.textContent;
+        const num = parseInt(text);
+        const suffix = text.replace(/[0-9]/g, '');
+        if (!isNaN(num)) {
+          let current = 0;
+          const step = Math.ceil(num / 40);
+          const timer = setInterval(() => {
+            current = Math.min(current + step, num);
+            el.textContent = current + suffix;
+            if (current >= num) clearInterval(timer);
+          }, 30);
+        }
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(c => observer.observe(c));
+</script>
+
+<script>
+// ─── Dynamic Services from CMS ───────────────────────────────
+(function() {
+  const SVC_ICONS = {
+    web:      '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
+    uiux:     '<circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>',
+    brand:    '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>',
+    strategy: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+    cms:      '<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+    wrench:   '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+    cart:     '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>',
+    social:   '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
+    video:    '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>',
+    mobile:   '<rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
+    search:   '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+    email:    '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+    bar:      '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+    star:     '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  };
+
+  const grid = document.getElementById('services-grid');
+  if (!grid) return;
+  let svcs;
+  try { svcs = JSON.parse(localStorage.getItem('lh_services') || '[]'); } catch(e) { return; }
+  const active = svcs.filter(s => s.active === 'active').sort((a,b) => (a.order||99)-(b.order||99));
+  if (!active.length) return; // keep static HTML
+
+  grid.innerHTML = active.map(s => {
+    const iconPath = SVC_ICONS[s.icon] || SVC_ICONS.web;
+    return `
+    <div class="service-card">
+      <div class="service-icon">
+        <svg viewBox="0 0 24 24">${iconPath}</svg>
+      </div>
+      <div class="service-name">${s.name}</div>
+      <div class="service-desc">${s.desc || ''}</div>
+      <div class="service-arrow">↗</div>
+    </div>`;
+  }).join('');
+})();
+</script>
+
+</body>
+</html>

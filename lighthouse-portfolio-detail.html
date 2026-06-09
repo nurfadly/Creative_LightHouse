@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detail Proyek — Lighthouse Digital Agency</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary:    #fc4615;
+      --primary-d:  #d93a0f;
+      --primary-l:  #fff1ee;
+      --bg:         #ffffff;
+      --bg-2:       #f8f8f8;
+      --bg-3:       #f0f0f0;
+      --border:     #e5e5e5;
+      --text:       #111111;
+      --text-mid:   #555555;
+      --text-light: #888888;
+      --font:       'Inter', system-ui, -apple-system, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
+
+    .label { font-size: .75rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--primary); }
+    .section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.15; color: var(--text); }
+    .section-sub { font-size: 1.05rem; color: var(--text-mid); max-width: 520px; line-height: 1.7; }
+
+    .btn { display: inline-flex; align-items: center; gap: .5rem; padding: .85rem 2rem; border-radius: 8px; font-weight: 700; font-size: .95rem; cursor: pointer; transition: all .2s; border: none; text-decoration: none; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-d); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(252,70,21,.25); }
+    .btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
+    .btn-white { background: #fff; color: var(--primary); }
+    .btn-white:hover { background: #111; color: #fff; transform: translateY(-2px); }
+
+    /* NAV */
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 5vw; background: rgba(255,255,255,.92); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); transition: box-shadow .3s; }
+    .nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,.08); }
+    .nav-logo svg { height: 30px; width: auto; }
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; font-size: .9rem; font-weight: 500; color: var(--text-mid); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a.active { color: var(--primary); font-weight: 700; }
+    .nav-cta { font-size: .88rem; padding: .65rem 1.4rem; }
+
+    /* BACK BAR */
+    .back-bar {
+      margin-top: 72px;
+      padding: .9rem 5vw;
+      background: var(--bg-2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .85rem;
+      color: var(--text-light);
+    }
+    .back-bar a { color: var(--text-mid); font-weight: 500; transition: color .2s; }
+    .back-bar a:hover { color: var(--primary); }
+    .back-bar .sep { opacity: .4; }
+
+    /* PROJECT HERO */
+    .project-hero {
+      padding: 4rem 5vw 0;
+    }
+    .project-hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .project-cat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      background: var(--primary-l);
+      border: 1px solid rgba(252,70,21,.2);
+      border-radius: 100px;
+      padding: .35rem 1rem;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .project-year-tag {
+      font-size: .82rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+    .project-hero-title {
+      font-size: clamp(2rem, 5vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -.02em;
+      color: var(--text);
+      margin-bottom: 1.2rem;
+      max-width: 800px;
+    }
+    .project-hero-desc {
+      font-size: 1.1rem;
+      color: var(--text-mid);
+      max-width: 640px;
+      line-height: 1.8;
+      margin-bottom: 2.5rem;
+    }
+
+    /* PROJECT COVER */
+    .project-cover {
+      width: 100%;
+      border-radius: 20px 20px 0 0;
+      overflow: hidden;
+      aspect-ratio: 16/7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .project-cover-inner {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      gap: 3rem;
+    }
+
+    /* PROJECT BODY */
+    .project-body {
+      padding: 5rem 5vw;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    /* Main content */
+    .project-main h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 1rem;
+      margin-top: 2.5rem;
+    }
+    .project-main h2:first-child { margin-top: 0; }
+    .project-main p {
+      font-size: 1rem;
+      color: var(--text-mid);
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+    .challenge-list, .result-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+      margin-bottom: 1.5rem;
+    }
+    .challenge-list li, .result-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: .7rem;
+      font-size: .95rem;
+      color: var(--text-mid);
+      line-height: 1.6;
+    }
+    .challenge-list li::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      flex-shrink: 0;
+      margin-top: .45rem;
+    }
+    .result-list li::before {
+      content: '✓';
+      color: #20c97a;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    /* Result metrics */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    .metric-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .metric-num { font-size: 2rem; font-weight: 900; color: var(--primary); line-height: 1; }
+    .metric-label { font-size: .78rem; color: var(--text-light); margin-top: .4rem; font-weight: 500; }
+
+    /* Screenshots */
+    .screenshots { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0; }
+    .screenshot {
+      border-radius: 10px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border);
+    }
+    .screenshot:first-child { grid-column: span 2; aspect-ratio: 16/7; }
+
+    /* SIDEBAR */
+    .project-sidebar { position: sticky; top: 100px; }
+    .sidebar-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .sidebar-title {
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--text-light);
+      margin-bottom: 1.2rem;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: .65rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: .88rem;
+    }
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .info-key { color: var(--text-light); font-weight: 500; }
+    .info-val { color: var(--text); font-weight: 600; text-align: right; max-width: 55%; }
+    .tech-stack { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+    .tech-tag {
+      font-size: .72rem; font-weight: 600;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .3rem .7rem;
+      color: var(--text-mid);
+    }
+    .sidebar-cta { display: block; width: 100%; text-align: center; padding: 1rem; background: var(--primary); color: #fff; border-radius: 10px; font-weight: 700; font-size: .92rem; transition: background .2s, transform .2s; }
+    .sidebar-cta:hover { background: var(--primary-d); transform: translateY(-2px); }
+
+    /* MORE PROJECTS */
+    .more-projects { padding: 5rem 5vw; background: var(--bg-2); border-top: 1px solid var(--border); }
+    .more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+    .more-card {
+      border-radius: 14px; overflow: hidden;
+      background: var(--bg); border: 1px solid var(--border);
+      transition: box-shadow .3s, transform .3s; cursor: pointer;
+      text-decoration: none;
+    }
+    .more-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,.1); transform: translateY(-4px); }
+    .more-thumb { width: 100%; aspect-ratio: 16/9; }
+    .more-info { padding: 1.2rem; }
+    .more-cat { font-size: .7rem; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .3rem; }
+    .more-title { font-size: .95rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+    .more-year { font-size: .75rem; color: var(--text-light); margin-top: .4rem; }
+
+    /* CTA STRIP */
+    .cta-strip { padding: 5rem 5vw; background: var(--primary); text-align: center; position: relative; overflow: hidden; }
+    .cta-strip::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px); background-size: 50px 50px; }
+    .cta-strip .label { position: relative; color: rgba(255,255,255,.75); display: block; margin-bottom: .8rem; }
+    .cta-strip .section-title { position: relative; color: #fff; margin-bottom: 1rem; }
+    .cta-strip .section-sub { position: relative; color: rgba(255,255,255,.75); margin: 0 auto 2rem; }
+
+    /* FOOTER */
+    footer { background: var(--bg-2); border-top: 1px solid var(--border); padding: 2.5rem 5vw; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
+    footer .footer-logo svg { height: 26px; width: auto; }
+    .footer-links { display: flex; gap: 2rem; list-style: none; font-size: .85rem; color: var(--text-light); }
+    .footer-links a:hover { color: var(--primary); }
+    .footer-copy { font-size: .8rem; color: var(--text-light); }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg-2); }
+    ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+    @media (max-width: 900px) {
+      .project-body { grid-template-columns: 1fr; }
+      .project-sidebar { position: static; }
+      .more-grid { grid-template-columns: 1fr; }
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .screenshots { grid-template-columns: 1fr; }
+      .screenshot:first-child { grid-column: span 1; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="navbar">
+  <a href="lighthouse-landing.html" class="nav-logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 282.17 83.2">
+      <defs><style>.lm-orange{fill:#fc4615}.lm-white{fill:#ffffff}.lm-dark{fill:#111111}.lm-tag{fill:#fc4615}</style></defs>
+      <circle class="lm-orange" cx="41.6" cy="41.6" r="41.6"/>
+      <path class="lm-white" d="M65.79,42.77c-.06.62-.11,1.24-.17,1.86-.02.2-.05.4-.08.62-.47.03-.93.07-1.38.09-2.58.11-5.17.21-7.75.33-.72.03-1.46.02-2.16.19-1.37.32-2.26,1.22-2.6,2.57-.34,1.36.07,2.53,1.07,3.51,2.18,2.15,4.35,4.3,6.53,6.45.04.03.06.08.13.16-.44.42-.87.85-1.33,1.3-.52-.48-1.04-.94-1.55-1.42-2.45-2.25-4.9-4.49-7.33-6.77-1.06-1-1.84-2.2-2.12-3.68-.81-4.26,1.84-7.86,5.69-8.53.9-.16,1.83-.14,2.74-.18,2.79-.12,5.57-.24,8.36-.35.56-.02,1.11,0,1.73,0,.08.86.16,1.74.24,2.63v1.22Z"/><path class="lm-white" d="M19.81,31.41c.97-1.95,2.15-3.71,3.59-5.33.87.57,1.72,1.13,2.57,1.69,2.3,1.52,4.58,3.04,6.89,4.54,1.21.78,2.48.81,3.72.08,1.22-.72,1.83-1.84,1.75-3.25-.05-.87-.26-1.73-.4-2.6-.44-2.68-.88-5.37-1.32-8.05,0-.01,0-.02.04-.09.49-.08,1.01-.16,1.53-.25.23-.04.26.1.3.29.58,2.88,1.17,5.75,1.74,8.63.28,1.41.58,2.81.8,4.23.65,4.17-2.52,7.54-5.89,8.02-1.89.27-3.6-.13-5.19-1.19-3.21-2.15-6.43-4.27-9.65-6.4-.15-.1-.29-.2-.48-.32Z"/><path class="lm-white" d="M51.74,20.18c-.18.65-.35,1.3-.52,1.95-.82,2.95-1.64,5.9-2.45,8.86-.63,2.29,1.08,4.56,3.43,4.5.55-.01,1.14-.18,1.64-.42,2.9-1.46,5.77-2.97,8.66-4.45.08-.04.16-.08.29-.13.27.55.54,1.09.83,1.66-.78.44-1.52.86-2.26,1.28-2.82,1.59-5.63,3.19-8.46,4.75-1.24.69-2.56,1.16-4.01,1.06-4.08-.28-6.44-3.21-6.81-6.2-.16-1.25.1-2.42.43-3.61.99-3.52,1.97-7.05,2.95-10.58.16-.59.16-.59.76-.47,1.83.35,3.6.91,5.29,1.69.07.03.13.07.23.12Z"/><path class="lm-white" d="M24.73,59.58c-1.56-1.49-2.87-3.14-3.99-5,.1-.09.2-.18.3-.27,2.66-2.12,5.32-4.25,7.98-6.36,1.24-.99,1.71-2.26,1.33-3.79-.35-1.44-1.57-2.4-3.13-2.63-2.8-.41-5.6-.85-8.41-1.28-.45-.07-.9-.13-1.41-.21.07-.62.14-1.21.21-1.84.79.09,1.55.17,2.3.26,1.68.19,3.36.37,5.04.58,2.09.26,4.2.47,6.27.85,3.23.6,5.14,3.74,5.34,6.11.21,2.55-.63,4.66-2.62,6.27-2.98,2.41-6,4.78-9,7.16-.06.05-.12.09-.21.15Z"/><path class="lm-white" d="M31.98,64.42c-.56-.27-1.11-.53-1.68-.81.45-.99.89-1.95,1.33-2.91,1.24-2.7,2.47-5.41,3.73-8.11,1.05-2.24,2.79-3.61,5.23-4.09,3.35-.65,6.71,1.23,7.9,4.44,1.3,3.48,2.59,6.96,3.89,10.43.08.22.13.37-.16.51-1.73.83-3.52,1.47-5.38,1.9-.31.07-.43,0-.55-.3-1.14-3.06-2.29-6.12-3.44-9.18-.56-1.48-1.62-2.35-3.2-2.44-1.56-.08-2.71.67-3.41,2.07-1.36,2.71-2.72,5.41-4.08,8.12-.06.11-.12.22-.2.36Z"/>
+      <path class="lm-orange" d="M104.15,42.7c-2.14,0-3.58-1.44-3.58-3.58v-17.07c0-2.14,1.44-3.58,3.58-3.58h1.83c2.14,0,3.58,1.44,3.58,3.58v12.36h4.66c2.14,0,3.58,1.44,3.58,3.58v1.13c0,2.14-1.44,3.58-3.58,3.58h-10.08Z"/><rect class="lm-orange" x="115.77" y="18.46" width="9" height="24.24" rx="3.58" ry="3.58"/><path class="lm-orange" d="M161.89,42.7c-2.14,0-3.58-1.44-3.58-3.58v-4.32h-3.27v4.32c0,2.14-1.44,3.58-3.58,3.58h-1.83c-2.14,0-3.59-1.44-3.59-3.58v-17.07c0-2.14,1.44-3.58,3.59-3.58h1.83c2.14,0,3.58,1.44,3.58,3.58v4.49h3.27v-4.49c0-2.14,1.44-3.58,3.58-3.58h1.83c2.14,0,3.58,1.44,3.58,3.58v17.07c0,2.14-1.44,3.58-3.58,3.58h-1.83Z"/><path class="lm-orange" d="M175.07,42.7c-2.14,0-3.58-1.44-3.58-3.58v-12.36h-2.54c-2.14,0-3.58-1.44-3.58-3.58v-1.13c0-2.14,1.44-3.58,3.58-3.58h14.08c2.14,0,3.58,1.44,3.58,3.58v1.13c0,2.14-1.44,3.58-3.58,3.58h-2.54v12.36c0,2.14-1.44,3.58-3.58,3.58h-1.83Z"/><path class="lm-orange" d="M200.52,42.7c-2.14,0-3.58-1.44-3.58-3.58v-4.32h-3.27v4.32c0,2.14-1.44,3.58-3.58,3.58h-1.83c-2.14,0-3.58-1.44-3.58-3.58v-17.07c0-2.14,1.44-3.58,3.58-3.58h1.83c2.14,0,3.58,1.44,3.58,3.58v4.49h3.27v-4.49c0-2.14,1.44-3.58,3.58-3.58h1.83c2.14,0,3.58,1.44,3.58,3.58v17.07c0,2.14-1.44,3.58-3.58,3.58h-1.83Z"/><path class="lm-orange" d="M217.32,43.04c-1.83,0-3.53-.33-5.08-.98-1.54-.65-2.89-1.55-4.01-2.69-1.12-1.14-1.99-2.49-2.6-4.02-.6-1.51-.91-3.16-.91-4.9s.31-3.32.91-4.81c.61-1.5,1.48-2.83,2.6-3.95,1.12-1.12,2.47-2.01,4.02-2.63,1.54-.62,3.24-.94,5.05-.94s3.52.32,5.05.94c1.54.63,2.9,1.51,4.02,2.63,1.12,1.12,2,2.45,2.6,3.95.6,1.49.91,3.11.91,4.81s-.3,3.39-.91,4.9c-.61,1.53-1.48,2.88-2.6,4.02-1.12,1.14-2.47,2.05-4.01,2.69-1.54.65-3.25.98-5.08.98ZM217.32,26.7c-.51,0-.96.09-1.37.27s-.75.42-1.04.73c-.31.33-.54.72-.72,1.18-.18.47-.27.99-.27,1.57,0,.62.09,1.19.28,1.69.19.5.43.91.74,1.26.3.33.64.59,1.06.78.4.19.84.28,1.33.28s.93-.09,1.33-.28c.42-.2.77-.45,1.06-.78.31-.35.55-.76.74-1.26.19-.5.28-1.07.28-1.69,0-.58-.09-1.09-.27-1.57-.18-.47-.42-.85-.72-1.18-.29-.31-.63-.55-1.05-.73-.41-.18-.86-.27-1.37-.27Z"/><path class="lm-orange" d="M238.99,43.04c-1.51,0-2.92-.24-4.19-.7-1.29-.48-2.42-1.16-3.35-2.03-.94-.88-1.68-1.94-2.19-3.14-.51-1.2-.77-2.51-.77-3.91v-11.2c0-2.14,1.44-3.58,3.58-3.58h1.83c2.14,0,3.58,1.44,3.58,3.58v11.2c0,.31.04.72.24.89.25.21.66.32,1.22.32s.98-.11,1.22-.32c.2-.17.24-.58.24-.89v-11.2c0-2.14,1.44-3.58,3.58-3.58h1.83c2.14,0,3.58,1.44,3.58,3.58v11.2c0,1.4-.26,2.72-.77,3.92-.51,1.21-1.25,2.26-2.19,3.14-.93.87-2.05,1.55-3.33,2.03-1.26.47-2.66.71-4.15.71Z"/><path class="lm-orange" d="M268.65,42.7c-2.14,0-3.58-1.44-3.58-3.58v-17.07c0-2.14,1.44-3.58,3.58-3.58h9.54c2.14,0,3.58,1.44,3.58,3.58v1.13c0,2.07-1.35,3.49-3.37,3.58,1.13.57,1.82,1.71,1.82,3.19v1.13c0,1.61-.81,2.83-2.13,3.33h.49c2.14,0,3.58,1.44,3.58,3.58v1.13c0,2.14-1.44,3.58-3.58,3.58h-9.93Z"/>
+      <path class="lm-dark" d="M102.59,22.04c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v14.39h6.69c1.03,0,1.55.52,1.55,1.55v1.13c0,1.03-.52,1.55-1.55,1.55h-10.08c-1.04,0-1.55-.52-1.55-1.55v-17.07Z"/><path class="lm-dark" d="M117.81,22.04c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v17.07c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.04,0-1.55-.52-1.55-1.55v-17.07Z"/><path class="lm-dark" d="M148.06,22.04c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v6.52h7.34v-6.52c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v17.07c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.04,0-1.55-.52-1.55-1.55v-6.35h-7.34v6.35c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.04,0-1.55-.52-1.55-1.55v-17.07Z"/><path class="lm-dark" d="M173.52,24.72h-4.57c-1.03,0-1.55-.52-1.55-1.55v-1.13c0-1.03.52-1.55,1.55-1.55h14.08c1.03,0,1.55.52,1.55,1.55v1.13c0,1.04-.52,1.55-1.55,1.55h-4.57v14.39c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.03,0-1.55-.52-1.55-1.55v-14.39Z"/><path class="lm-dark" d="M186.69,22.04c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v6.52h7.34v-6.52c0-1.03.52-1.55,1.55-1.55h1.83c1.03,0,1.55.52,1.55,1.55v17.07c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.04,0-1.55-.52-1.55-1.55v-6.35h-7.34v6.35c0,1.03-.52,1.55-1.55,1.55h-1.83c-1.03,0-1.55-.52-1.55-1.55v-17.07Z"/><path class="lm-dark" d="M267.1,22.04c0-1.03.52-1.55,1.55-1.55h9.54c1.03,0,1.55.52,1.55,1.55v1.13c0,1.04-.52,1.55-1.55,1.55h-6.15v3.67h4.6c1.03,0,1.55.52,1.55,1.55v1.13c0,1.03-.52,1.55-1.55,1.55h-4.6v3.81h6.55c1.03,0,1.55.52,1.55,1.55v1.13c0,1.03-.52,1.55-1.55,1.55h-9.93c-1.03,0-1.55-.52-1.55-1.55v-17.07Z"/>
+      <path class="lm-tag" d="M102.09,55.37c0-1.47.25-2.82.75-4.05.5-1.23,1.19-2.3,2.07-3.2.88-.9,1.93-1.61,3.15-2.12,1.21-.51,2.54-.76,3.99-.76,1.2,0,2.4.19,3.6.58,1.19.39,2.22.9,3.06,1.54.3.28.34.61.11.99l-.25.37c-.26.36-.58.4-.96.11-.79-.55-1.67-.97-2.64-1.28-.97-.31-1.92-.47-2.86-.47-1.17,0-2.24.2-3.22.61-.98.4-1.82.97-2.53,1.71-.71.73-1.26,1.61-1.65,2.62-.4,1.02-.59,2.13-.59,3.33s.2,2.39.61,3.44c.4,1.05.96,1.96,1.68,2.72.71.76,1.57,1.35,2.55,1.78s2.06.64,3.23.64c1.02,0,2.04-.19,3.08-.56,1.03-.38,1.98-.9,2.82-1.58.36-.28.68-.25.96.08l.25.31c.26.36.24.69-.06.99-.96.81-2.07,1.44-3.34,1.9-1.27.46-2.53.69-3.77.69-1.47,0-2.81-.26-4.04-.78-1.22-.52-2.28-1.24-3.17-2.16-.89-.92-1.59-2.02-2.09-3.29-.5-1.27-.75-2.66-.75-4.16Z"/>
+    </svg>
+  </a>
+  <ul class="nav-links">
+    <li><a href="lighthouse-tentang.html">Tentang</a></li>
+    <li><a href="lighthouse-layanan.html">Layanan</a></li>
+    <li><a href="lighthouse-portfolio.html" class="active">Portfolio</a></li>
+    <li><a href="lighthouse-kontak.html">Kontak</a></li>
+  </ul>
+  <a href="lighthouse-kontak.html" class="btn btn-primary nav-cta">Mulai Proyek ↗</a>
+</nav>
+
+<!-- BACK BAR -->
+<div class="back-bar">
+  <a href="lighthouse-landing.html">Beranda</a>
+  <span class="sep">/</span>
+  <a href="lighthouse-portfolio.html">Portfolio</a>
+  <span class="sep">/</span>
+  <span id="breadcrumb-title">Detail Proyek</span>
+</div>
+
+<!-- DYNAMIC CONTENT -->
+<div id="project-hero-section"></div>
+<div id="project-body-section"></div>
+<div id="more-projects-section"></div>
+
+<!-- CTA -->
+<div class="cta-strip">
+  <span class="label">Proyek Berikutnya</span>
+  <h2 class="section-title">Ingin Hasil Seperti Ini<br/>untuk Bisnis Anda?</h2>
+  <p class="section-sub">Mari diskusikan visi Anda bersama tim kami. Konsultasi pertama gratis.</p>
+  <a href="lighthouse-kontak.html" class="btn btn-white">Mulai Diskusi →</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <a href="lighthouse-landing.html" class="footer-logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 83.2">
+      <defs><style>.f3-o{fill:#fc4615}.f3-w{fill:#fff}</style></defs>
+      <circle class="f3-o" cx="41.6" cy="41.6" r="41.6"/>
+      <path class="f3-w" d="M65.79,42.77c-.06.62-.11,1.24-.17,1.86-.02.2-.05.4-.08.62-.47.03-.93.07-1.38.09-2.58.11-5.17.21-7.75.33-.72.03-1.46.02-2.16.19-1.37.32-2.26,1.22-2.6,2.57-.34,1.36.07,2.53,1.07,3.51,2.18,2.15,4.35,4.3,6.53,6.45.04.03.06.08.13.16-.44.42-.87.85-1.33,1.3-.52-.48-1.04-.94-1.55-1.42-2.45-2.25-4.9-4.49-7.33-6.77-1.06-1-1.84-2.2-2.12-3.68-.81-4.26,1.84-7.86,5.69-8.53.9-.16,1.83-.14,2.74-.18,2.79-.12,5.57-.24,8.36-.35.56-.02,1.11,0,1.73,0,.08.86.16,1.74.24,2.63v1.22Z"/><path class="f3-w" d="M19.81,31.41c.97-1.95,2.15-3.71,3.59-5.33.87.57,1.72,1.13,2.57,1.69,2.3,1.52,4.58,3.04,6.89,4.54,1.21.78,2.48.81,3.72.08,1.22-.72,1.83-1.84,1.75-3.25-.05-.87-.26-1.73-.4-2.6-.44-2.68-.88-5.37-1.32-8.05,0-.01,0-.02.04-.09.49-.08,1.01-.16,1.53-.25.23-.04.26.1.3.29.58,2.88,1.17,5.75,1.74,8.63.28,1.41.58,2.81.8,4.23.65,4.17-2.52,7.54-5.89,8.02-1.89.27-3.6-.13-5.19-1.19-3.21-2.15-6.43-4.27-9.65-6.4-.15-.1-.29-.2-.48-.32Z"/><path class="f3-w" d="M51.74,20.18c-.18.65-.35,1.3-.52,1.95-.82,2.95-1.64,5.9-2.45,8.86-.63,2.29,1.08,4.56,3.43,4.5.55-.01,1.14-.18,1.64-.42,2.9-1.46,5.77-2.97,8.66-4.45.08-.04.16-.08.29-.13.27.55.54,1.09.83,1.66-.78.44-1.52.86-2.26,1.28-2.82,1.59-5.63,3.19-8.46,4.75-1.24.69-2.56,1.16-4.01,1.06-4.08-.28-6.44-3.21-6.81-6.2-.16-1.25.1-2.42.43-3.61.99-3.52,1.97-7.05,2.95-10.58.16-.59.16-.59.76-.47,1.83.35,3.6.91,5.29,1.69.07.03.13.07.23.12Z"/><path class="f3-w" d="M24.73,59.58c-1.56-1.49-2.87-3.14-3.99-5,.1-.09.2-.18.3-.27,2.66-2.12,5.32-4.25,7.98-6.36,1.24-.99,1.71-2.26,1.33-3.79-.35-1.44-1.57-2.4-3.13-2.63-2.8-.41-5.6-.85-8.41-1.28-.45-.07-.9-.13-1.41-.21.07-.62.14-1.21.21-1.84.79.09,1.55.17,2.3.26,1.68.19,3.36.37,5.04.58,2.09.26,4.2.47,6.27.85,3.23.6,5.14,3.74,5.34,6.11.21,2.55-.63,4.66-2.62,6.27-2.98,2.41-6,4.78-9,7.16-.06.05-.12.09-.21.15Z"/><path class="f3-w" d="M31.98,64.42c-.56-.27-1.11-.53-1.68-.81.45-.99.89-1.95,1.33-2.91,1.24-2.7,2.47-5.41,3.73-8.11,1.05-2.24,2.79-3.61,5.23-4.09,3.35-.65,6.71,1.23,7.9,4.44,1.3,3.48,2.59,6.96,3.89,10.43.08.22.13.37-.16.51-1.73.83-3.52,1.47-5.38,1.9-.31.07-.43,0-.55-.3-1.14-3.06-2.29-6.12-3.44-9.18-.56-1.48-1.62-2.35-3.2-2.44-1.56-.08-2.71.67-3.41,2.07-1.36,2.71-2.72,5.41-4.08,8.12-.06.11-.12.22-.2.36Z"/>
+    </svg>
+  </a>
+  <ul class="footer-links">
+    <li><a href="lighthouse-tentang.html">Tentang</a></li>
+    <li><a href="lighthouse-layanan.html">Layanan</a></li>
+    <li><a href="lighthouse-portfolio.html">Portfolio</a></li>
+    <li><a href="lighthouse-kontak.html">Kontak</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 Lighthouse Creative Agency. All rights reserved.</div>
+</footer>
+
+<script>
+  const nav = document.querySelector('.nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+
+  // ── Project data ──────────────────────────────────────────────────────
+  const projects = {
+    'ecommerce-fashion': {
+      cat: 'Web Development',
+      year: '2025',
+      title: 'Platform E-Commerce — Fashion Lokal',
+      desc: 'Membangun ekosistem toko online lengkap untuk brand fashion lokal yang ingin ekspansi digital — dari katalog produk hingga manajemen order dan integrasi pembayaran.',
+      coverBg: 'linear-gradient(135deg, #fde8e2 0%, #fbb49a 40%, #fc4615 100%)',
+      coverIcon: '<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>',
+      client: 'FashionKita',
+      duration: '3 Bulan',
+      scope: 'Web Development, UI/UX, CMS',
+      tech: ['Next.js', 'Tailwind CSS', 'Strapi CMS', 'Midtrans', 'Vercel'],
+      challenge: 'FashionKita memiliki ribuan SKU produk yang dikelola secara manual via spreadsheet. Tim mereka kesulitan sinkronisasi stok antara toko offline dan online, serta tidak memiliki dashboard untuk melihat performa penjualan secara real-time.',
+      challenges: [
+        'Migrasi ~4.000 SKU produk dari spreadsheet ke sistem baru tanpa downtime',
+        'Integrasi dengan payment gateway lokal (Midtrans) dan ekspedisi (JNE, SiCepat)',
+        'Dashboard admin yang mudah digunakan oleh tim non-teknis',
+        'Performa halaman yang cepat meski memuat banyak gambar produk',
+      ],
+      solution: 'Kami merancang arsitektur headless commerce menggunakan Next.js untuk frontend dan Strapi sebagai CMS. Sistem manajemen stok real-time dibangun dengan antarmuka yang intuitif — tim FashionKita bisa update stok, tambah produk, dan lihat laporan tanpa perlu bantuan developer.',
+      results: [
+        'Konversi meningkat 2.4x dalam 3 bulan pertama post-launch',
+        'Waktu update produk turun dari 2 jam menjadi 10 menit',
+        'Page load time < 1.5 detik (Lighthouse score 94)',
+        'Integrasi 3 payment gateway dan 5 ekspedisi berjalan mulus',
+      ],
+      metrics: [{ num: '2.4×', label: 'Peningkatan Konversi' }, { num: '94', label: 'Lighthouse Score' }, { num: '10 mnt', label: 'Update Produk' }],
+      screens: [
+        { bg: 'linear-gradient(135deg,#fde8e2,#fc4615)', label: 'Homepage & Product Grid' },
+        { bg: 'linear-gradient(135deg,#1a0a05,#fc4615,#ff8040)', label: 'Admin Dashboard' },
+        { bg: 'linear-gradient(135deg,#fde8e2,#fbb49a)', label: 'Product Detail Page' },
+      ],
+    },
+    'brand-fintech': {
+      cat: 'Branding',
+      year: '2025',
+      title: 'Brand Identity — Fintech Startup',
+      desc: 'Membangun identitas merek yang kuat, terpercaya, dan modern untuk startup fintech yang baru memasuki pasar — dari logo hingga brand guidelines lengkap.',
+      coverBg: 'linear-gradient(135deg, #e2f5eb 0%, #9adcb8 50%, #20c97a 100%)',
+      coverIcon: '<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>',
+      client: 'FinPay',
+      duration: '6 Minggu',
+      scope: 'Brand Strategy, Logo Design, Brand Guidelines',
+      tech: ['Figma', 'Adobe Illustrator', 'Brand Guidelines PDF'],
+      challenge: 'FinPay adalah startup fintech yang akan meluncurkan produk pinjaman mikro untuk UMKM. Mereka butuh identitas merek yang memancarkan kepercayaan dan inovasi — namun tetap terasa hangat dan accessible untuk segmen UMKM.',
+      challenges: [
+        'Menemukan positioning unik di pasar fintech yang sudah ramai',
+        'Menyeimbangkan nuansa "professional/terpercaya" dengan "friendly/accessible"',
+        'Menciptakan sistem visual yang skalabel untuk berbagai media (app, web, ATK)',
+        'Menyelesaikan brand dalam tenggat waktu ketat sebelum pitch ke investor',
+      ],
+      solution: 'Proses dimulai dengan brand workshop 2 hari bersama tim FinPay untuk menggali positioning dan nilai inti. Kami mengembangkan konsep "Jembatan Hijau" — metafora visual untuk koneksi antara modal dan peluang. Palet hijau emerald dikombinasikan dengan tipografi geometris yang tegas namun ramah.',
+      results: [
+        'Brand diterima baik oleh 12 investor dalam sesi pitch Series A',
+        'NPS brand awareness meningkat 68% dalam 2 bulan pertama',
+        'Tim internal mampu menggunakan brand secara konsisten tanpa revisi berulang',
+        'Logo mendapat penghargaan "Best Fintech Brand 2025" dari DesignAwards.id',
+      ],
+      metrics: [{ num: '68%', label: 'Brand Awareness' }, { num: '12', label: 'Investor Tertarik' }, { num: '6 mgg', label: 'Waktu Pengerjaan' }],
+      screens: [
+        { bg: 'linear-gradient(135deg,#e2f5eb,#20c97a)', label: 'Logo & Color System' },
+        { bg: 'linear-gradient(135deg,#0a1a10,#20c97a)', label: 'Brand Applications' },
+        { bg: 'linear-gradient(135deg,#e2f5eb,#9adcb8)', label: 'Marketing Collateral' },
+      ],
+    },
+    'uiux-banking': {
+      cat: 'UI/UX',
+      year: '2024',
+      title: 'Mobile Banking App Redesign',
+      desc: 'Mendesain ulang pengalaman aplikasi mobile banking dari nol — meningkatkan usability, aksesibilitas, dan kepuasan pengguna secara signifikan.',
+      coverBg: 'linear-gradient(135deg, #ebe2f5 0%, #b89adc 50%, #6c63ff 100%)',
+      coverIcon: '<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>',
+      client: 'MobilBank',
+      duration: '4 Bulan',
+      scope: 'UX Research, UI Design, Usability Testing',
+      tech: ['Figma', 'Maze', 'Hotjar', 'Prototyping'],
+      challenge: 'MobilBank memiliki aplikasi yang sudah berumur 4 tahun dengan rating App Store 2.8/5. Pengguna mengeluhkan navigasi yang membingungkan, proses transfer yang membutuhkan terlalu banyak langkah, dan tampilan yang terasa usang.',
+      challenges: [
+        'Meredesain tanpa kehilangan pengguna yang sudah familiar dengan alur lama',
+        'Memenuhi regulasi OJK terkait keamanan dan konfirmasi transaksi',
+        'Memastikan aksesibilitas untuk pengguna lansia yang merupakan 30% basis pengguna',
+        'Mengurangi jumlah tap untuk proses transfer dari 8 menjadi 3',
+      ],
+      solution: 'Kami memulai dengan riset mendalam: 20 user interview, analisis heatmap Hotjar, dan benchmark 8 aplikasi banking kompetitor. Prototype iteratif diuji dengan 50 pengguna nyata menggunakan Maze sebelum final design diserahkan ke tim developer.',
+      results: [
+        'Rating App Store naik dari 2.8 menjadi 4.6 dalam 6 bulan',
+        'Proses transfer berkurang dari 8 tap menjadi 3 tap',
+        'Drop-off rate di halaman transfer turun 61%',
+        'Waktu penyelesaian task turun rata-rata 45%',
+      ],
+      metrics: [{ num: '4.6★', label: 'Rating App Store' }, { num: '61%', label: 'Drop-off Turun' }, { num: '3 tap', label: 'Proses Transfer' }],
+      screens: [
+        { bg: 'linear-gradient(135deg,#ebe2f5,#6c63ff)', label: 'Dashboard & Home Screen' },
+        { bg: 'linear-gradient(135deg,#0a0a1a,#6c63ff)', label: 'Transfer Flow' },
+        { bg: 'linear-gradient(135deg,#ebe2f5,#b89adc)', label: 'Component Library' },
+      ],
+    },
+    'strategy-fnb': {
+      cat: 'Digital Strategy',
+      year: '2024',
+      title: 'SEO & Content Strategy — F&B Chain',
+      desc: 'Menyusun dan mengeksekusi strategi konten dan SEO komprehensif untuk jaringan restoran lokal yang ingin mendominasi pencarian online di 5 kota.',
+      coverBg: 'linear-gradient(135deg, #fef5e2 0%, #f5d49a 50%, #f5a623 100%)',
+      coverIcon: '<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+      client: 'Warung&Co',
+      duration: '6 Bulan (ongoing)',
+      scope: 'SEO, Content Marketing, Social Media',
+      tech: ['Google Search Console', 'Ahrefs', 'Meta Ads', 'Canva Pro', 'Hootsuite'],
+      challenge: 'Warung&Co memiliki 12 outlet di 5 kota namun hampir tidak terlihat di Google. Kompetitor nasional mendominasi kata kunci utama, traffic organik nyaris nol, dan media sosial mereka tidak terkelola dengan baik.',
+      challenges: [
+        'Membangun otoritas domain dari nol di industri yang kompetitif',
+        'Menyesuaikan tone konten untuk segmen keluarga dan anak muda sekaligus',
+        'Optimasi lokal (local SEO) untuk 12 outlet di kota berbeda',
+        'Membuat konten yang konsisten dengan anggaran terbatas',
+      ],
+      solution: 'Kami melakukan audit SEO menyeluruh dan mengidentifikasi 200+ keyword peluang. Strategi konten 6 bulan dirancang dengan pilar konten (resep, behind-the-scene, promosi) dan distribusi lintas platform. Local SEO dioptimasi lewat Google Business Profile untuk setiap outlet.',
+      results: [
+        'Organic traffic naik 340% dalam 6 bulan',
+        '18 keyword di halaman 1 Google (dari 0 sebelumnya)',
+        'Followers Instagram +15.000 dalam 4 bulan',
+        'Revenue dari online order naik 28% MoM',
+      ],
+      metrics: [{ num: '340%', label: 'Organic Traffic' }, { num: '18', label: 'Keyword Hal. 1' }, { num: '28%', label: 'Revenue Online' }],
+      screens: [
+        { bg: 'linear-gradient(135deg,#fef5e2,#f5a623)', label: 'SEO Dashboard & Rankings' },
+        { bg: 'linear-gradient(135deg,#1a1000,#f5a623)', label: 'Social Media Content Calendar' },
+        { bg: 'linear-gradient(135deg,#fef5e2,#f5d49a)', label: 'Performance Reports' },
+      ],
+    },
+    'web-konstruksi': {
+      cat: 'Web Dev + CMS',
+      year: '2024',
+      title: 'Company Profile — Konstruksi',
+      desc: 'Membangun website company profile modern dengan CMS yang mudah dikelola untuk perusahaan konstruksi yang ingin memperkuat kepercayaan klien korporat.',
+      coverBg: 'linear-gradient(135deg, #e2f2f5 0%, #9ad5dc 50%, #00b8d4 100%)',
+      coverIcon: '<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+      client: 'Bangunan Jaya',
+      duration: '6 Minggu',
+      scope: 'Web Development, CMS Integration',
+      tech: ['WordPress', 'Elementor Pro', 'ACF', 'Cloudflare'],
+      challenge: 'Bangunan Jaya adalah kontraktor berpengalaman 20 tahun namun website mereka masih menggunakan template 2015. Banyak klien potensial ragu karena kesan pertama yang tidak profesional, padahal portofolio proyek mereka sangat kuat.',
+      challenges: [
+        'Menampilkan 50+ proyek dengan visual yang menarik namun tidak berat',
+        'Website yang bisa diupdate sendiri oleh tim admin non-teknis',
+        'Performa di mobile yang optimal karena mayoritas trafik dari handphone',
+        'Integrasi formulir penawaran yang terhubung ke CRM internal',
+      ],
+      solution: 'Desain bersih, profesional, dengan portofolio proyek sebagai highlight utama. WordPress dengan ACF memungkinkan tim Bangunan Jaya menambah proyek baru, update berita, dan kelola konten tanpa coding. Optimasi gambar dan lazy loading memastikan performa tetap cepat.',
+      results: [
+        'Waktu di halaman naik 180% (dari 45 detik menjadi 2.1 menit)',
+        'Inquiry via website meningkat 4x dalam bulan pertama',
+        'Mobile Lighthouse score 91 (dari 32 sebelumnya)',
+        'Tim admin bisa update konten mandiri tanpa developer',
+      ],
+      metrics: [{ num: '4×', label: 'Inquiry Meningkat' }, { num: '91', label: 'Mobile Score' }, { num: '180%', label: 'Durasi Kunjungan' }],
+      screens: [
+        { bg: 'linear-gradient(135deg,#e2f2f5,#00b8d4)', label: 'Homepage & Portfolio' },
+        { bg: 'linear-gradient(135deg,#0a1a1c,#00b8d4)', label: 'CMS Admin Panel' },
+        { bg: 'linear-gradient(135deg,#e2f2f5,#9ad5dc)', label: 'Project Detail Pages' },
+      ],
+    },
+    'brand-healthcare': {
+      cat: 'Branding',
+      year: '2024',
+      title: 'Rebranding — Healthcare Startup',
+      desc: 'Memimpin proses rebranding menyeluruh untuk startup healthtech yang bertransisi dari B2C ke B2B enterprise — dengan identitas baru yang mencerminkan profesionalisme dan inovasi.',
+      coverBg: 'linear-gradient(135deg, #f5e2f2 0%, #dc9ad5 50%, #c963ff 100%)',
+      coverIcon: '<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+      client: 'SehatID',
+      duration: '8 Minggu',
+      scope: 'Brand Strategy, Identity Design, Digital Assets',
+      tech: ['Figma', 'Adobe CC', 'Lottie', 'Motion Design'],
+      challenge: 'SehatID memulai sebagai aplikasi konsultasi dokter B2C, namun pivot ke platform enterprise untuk rumah sakit dan klinik. Brand lama terasa terlalu "consumer" dan tidak meyakinkan untuk klien korporat seperti rumah sakit.',
+      challenges: [
+        'Transisi brand tanpa kehilangan pengguna B2C yang sudah ada',
+        'Menciptakan identitas yang terasa medical-grade namun tidak dingin/steril',
+        'Mengembangkan sistem ikon medis yang konsisten untuk 50+ use case',
+        'Animasi brand untuk presentasi dan video pitch',
+      ],
+      solution: 'Brand baru "SehatID Enterprise" menggunakan palet ungu-hitam yang memancarkan kepercayaan dan inovasi teknologi. Kami mengembangkan sistem desain lengkap termasuk 50 ikon kustom dan panduan animasi untuk Lottie. Strategi dual-brand mempertahankan elemen familiar untuk pengguna lama.',
+      results: [
+        '3 rumah sakit swasta menandatangani kontrak dalam 2 bulan pertama',
+        'Brand perception score naik dari 6.2 ke 8.7 (skala 10)',
+        'Presentasi pitch deck berhasil meraih pendanaan Seri B Rp 45M',
+        'Tim enterprise melapor bahwa brand baru jauh lebih mudah dijual',
+      ],
+      metrics: [{ num: '8.7/10', label: 'Brand Perception' }, { num: 'Seri B', label: 'Pendanaan Berhasil' }, { num: '3', label: 'RS Kontrak Baru' }],
+      screens: [
+        { bg: 'linear-gradient(135deg,#f5e2f2,#c963ff)', label: 'New Brand Identity' },
+        { bg: 'linear-gradient(135deg,#1a001a,#c963ff)', label: 'Enterprise Dashboard UI' },
+        { bg: 'linear-gradient(135deg,#f5e2f2,#dc9ad5)', label: 'Brand Guidelines Book' },
+      ],
+    },
+    'uiux-properti': {
+      cat: 'UI/UX',
+      year: '2023',
+      title: 'Aplikasi Manajemen Properti',
+      desc: 'Merancang aplikasi mobile dan web untuk manajemen properti end-to-end — dari listing, tenant management, hingga laporan keuangan bulanan.',
+      coverBg: 'linear-gradient(135deg, #e2eef5 0%, #9ac4dc 50%, #1e7fc8 100%)',
+      coverIcon: '<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+      client: 'PropSpace',
+      duration: '5 Bulan',
+      scope: 'Product Design, UX Research, Design System',
+      tech: ['Figma', 'FigJam', 'ProtoPie', 'Zeroheight'],
+      challenge: 'PropSpace melayani pemilik properti yang mengelola 10-100 unit. Mereka menggunakan campuran spreadsheet, WhatsApp, dan transfer bank manual — tidak ada visibilitas atas kondisi properti, status pembayaran, dan keluhan tenant secara terpusat.',
+      challenges: [
+        'Merancang untuk dua persona berbeda: pemilik properti (non-teknis) dan penyewa (beragam usia)',
+        'Sistem notifikasi yang tidak mengganggu namun tetap tepat waktu',
+        'Laporan keuangan yang komprehensif namun mudah dipahami orang awam',
+        'Design system yang bisa diimplementasikan oleh 2 developer dalam 4 bulan',
+      ],
+      solution: 'Kami memulai dengan 3 minggu discovery: diary study dengan 8 pemilik properti, contextual inquiry untuk memahami workflow nyata mereka. Hasilnya: design system berbasis komponen yang mendukung iterasi cepat, dan alur onboarding yang memungkinkan pengguna produktif dalam < 10 menit.',
+      results: [
+        'Time-to-productivity pengguna baru turun dari 2 jam ke 8 menit',
+        'Tingkat adopsi fitur laporan keuangan mencapai 78%',
+        '4.8/5 rating dari beta user dalam closed beta',
+        'Developer mengimplementasikan desain 30% lebih cepat berkat design system',
+      ],
+      metrics: [{ num: '4.8★', label: 'Beta User Rating' }, { num: '78%', label: 'Adopsi Fitur' }, { num: '8 mnt', label: 'Onboarding' }],
+      screens: [
+        { bg: 'linear-gradient(135deg,#e2eef5,#1e7fc8)', label: 'Dashboard & Property Overview' },
+        { bg: 'linear-gradient(135deg,#001020,#1e7fc8)', label: 'Financial Reports' },
+        { bg: 'linear-gradient(135deg,#e2eef5,#9ac4dc)', label: 'Tenant Management' },
+      ],
+    },
+    'web-akademi': {
+      cat: 'Web Development + CMS',
+      year: '2023',
+      title: 'Platform Edukasi Online — Lighthouse Academy',
+      desc: 'Membangun platform belajar online internal dari nol — dengan sistem kursus, kuis, sertifikasi, dan laporan progres untuk 500+ pelajar.',
+      coverBg: 'linear-gradient(135deg, #1a0a05, #3d1a0d, #fc4615 60%, #ff8040)',
+      coverIcon: '<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+      client: 'Lighthouse (Internal)',
+      duration: '4 Bulan',
+      scope: 'Full-stack Development, LMS, CMS',
+      tech: ['Next.js', 'PostgreSQL', 'Prisma', 'Cloudinary', 'Vercel'],
+      challenge: 'Tim internal Lighthouse membutuhkan platform pelatihan untuk onboarding karyawan baru dan upskilling tim. LMS komersial terlalu mahal dan tidak fleksibel untuk kebutuhan spesifik kami — termasuk sertifikat kustom dan integrasi dengan workflow internal.',
+      challenges: [
+        'Membangun LMS fungsional penuh dalam 4 bulan dengan tim 2 developer',
+        'Sistem progres dan sertifikasi yang otomatis dan anti-manipulasi',
+        'Video hosting yang efisien untuk konten 100+ jam',
+        'Dashboard analytics untuk instruktur memantau progres pelajar',
+      ],
+      solution: 'Arsitektur modular: frontend Next.js, backend API RESTful, dan database PostgreSQL. Video hosting menggunakan Cloudinary dengan adaptive streaming. Sistem gamifikasi (poin, badge, leaderboard) meningkatkan engagement. Sertifikat auto-generate menggunakan PDF templates.',
+      results: [
+        '500+ pelajar aktif dalam 3 bulan pertama',
+        'Waktu onboarding karyawan baru turun dari 2 minggu ke 3 hari',
+        'Completion rate kursus 84% (rata-rata industri 15%)',
+        'Hemat Rp 120 juta/tahun dibanding LMS komersial',
+      ],
+      metrics: [{ num: '500+', label: 'Pelajar Aktif' }, { num: '84%', label: 'Completion Rate' }, { num: '3 hari', label: 'Onboarding Baru' }],
+      screens: [
+        { bg: 'linear-gradient(135deg,#1a0a05,#fc4615)', label: 'Learning Dashboard' },
+        { bg: 'linear-gradient(135deg,#1a0a05,#ff8040)', label: 'Course Player & Quiz' },
+        { bg: 'linear-gradient(135deg,#3d1a0d,#fc4615)', label: 'Admin & Analytics' },
+      ],
+    },
+  };
+
+  // All projects for "more" section (excluding current)
+  const projectList = [
+    { id: 'ecommerce-fashion', cat: 'Web Development', title: 'Platform E-Commerce — Fashion Lokal', year: '2025', bg: 'linear-gradient(135deg,#fde8e2,#fc4615)' },
+    { id: 'brand-fintech', cat: 'Branding', title: 'Brand Identity — Fintech Startup', year: '2025', bg: 'linear-gradient(135deg,#e2f5eb,#20c97a)' },
+    { id: 'uiux-banking', cat: 'UI/UX', title: 'Mobile Banking App Redesign', year: '2024', bg: 'linear-gradient(135deg,#ebe2f5,#6c63ff)' },
+    { id: 'strategy-fnb', cat: 'Digital Strategy', title: 'SEO & Content — F&B Chain', year: '2024', bg: 'linear-gradient(135deg,#fef5e2,#f5a623)' },
+    { id: 'web-konstruksi', cat: 'Web Dev + CMS', title: 'Company Profile — Konstruksi', year: '2024', bg: 'linear-gradient(135deg,#e2f2f5,#00b8d4)' },
+    { id: 'brand-healthcare', cat: 'Branding', title: 'Rebranding — Healthcare Startup', year: '2024', bg: 'linear-gradient(135deg,#f5e2f2,#c963ff)' },
+    { id: 'uiux-properti', cat: 'UI/UX', title: 'Aplikasi Manajemen Properti', year: '2023', bg: 'linear-gradient(135deg,#e2eef5,#1e7fc8)' },
+    { id: 'web-akademi', cat: 'Web Development', title: 'Platform Edukasi — Lighthouse Academy', year: '2023', bg: 'linear-gradient(135deg,#1a0a05,#fc4615)' },
+  ];
+
+  // ── Gradient colours (match CMS) ────────────────────────────────────
+  const GRAD_COLORS = [
+    'linear-gradient(135deg,#fde8e2 0%,#fbb49a 40%,#fc4615 100%)',
+    'linear-gradient(135deg,#e2f5eb 0%,#9adcb8 50%,#20c97a 100%)',
+    'linear-gradient(135deg,#ebe2f5 0%,#b89adc 50%,#6c63ff 100%)',
+    'linear-gradient(135deg,#fef5e2 0%,#f5d49a 50%,#f5a623 100%)',
+    'linear-gradient(135deg,#e2f2f5 0%,#9ad5dc 50%,#00b8d4 100%)',
+    'linear-gradient(135deg,#111 0%,#333 50%,#555 100%)',
+  ];
+
+  function mapCmsProject(p) {
+    const coverImg = p.thumbnail || p.gallery?.[0] || null;
+    const coverBg  = coverImg ? null : GRAD_COLORS[p.color % 6];
+    const screens  = p.gallery && p.gallery.length
+      ? p.gallery.slice(0, 3).map((img, i) => ({ img, label: 'Screenshot ' + (i + 1) }))
+      : [{ bg: GRAD_COLORS[p.color % 6], label: 'Preview' }];
+    return {
+      cat:        p.cat,
+      year:       String(p.year),
+      title:      p.title,
+      desc:       p.long || p.short || '',
+      coverBg,
+      coverImg,
+      coverIcon:  '<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+      client:     p.client || '—',
+      duration:   p.duration || '—',
+      scope:      p.scope || p.cat,
+      tech:       Array.isArray(p.tech) ? p.tech : [],
+      challenge:  p.challenge || '',
+      challenges: Array.isArray(p.challenges) ? p.challenges : [],
+      solution:   p.solution || '',
+      results:    Array.isArray(p.results) ? p.results : [],
+      metrics:    Array.isArray(p.metrics) ? p.metrics : [],
+      screens,
+    };
+  }
+
+  function render() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id') || 'ecommerce-fashion';
+
+    // ── Try localStorage first (CMS project = numeric ID) ───────────
+    let p = null;
+    if (/^\d+$/.test(id)) {
+      try {
+        const stored = JSON.parse(localStorage.getItem('lh_projects') || '[]');
+        const found  = stored.find(x => String(x.id) === id);
+        if (found) p = mapCmsProject(found);
+      } catch(e) {}
+    }
+    // ── Fall back to hardcoded slug data ─────────────────────────────
+    if (!p) p = projects[id] ? { ...projects[id] } : { ...projects['ecommerce-fashion'] };
+    // Ensure fallback fields exist for uniform render
+    p.coverImg    = p.coverImg    || null;
+    p.challenges  = p.challenges  || p.challenges_raw  || [];
+    p.results     = p.results     || p.results_raw     || [];
+    p.metrics     = p.metrics     || [];
+    p.duration    = p.duration    || '—';
+    p.scope       = p.scope       || p.cat;
+    p.tech        = p.tech        || [];
+
+    document.title = p.title + ' — Lighthouse';
+    document.getElementById('breadcrumb-title').textContent = p.title;
+
+    // HERO
+    document.getElementById('project-hero-section').innerHTML = `
+      <div class="project-hero">
+        <div class="project-hero-meta">
+          <span class="project-cat-badge">${p.cat}</span>
+          <span class="project-year-tag">${p.year}</span>
+        </div>
+        <h1 class="project-hero-title">${p.title}</h1>
+        <p class="project-hero-desc">${p.desc}</p>
+        <div class="project-cover">
+          ${p.coverImg
+            ? `<img src="${p.coverImg}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;">`
+            : `<div class="project-cover-inner" style="background:${p.coverBg};">${p.coverIcon}${p.coverIcon}${p.coverIcon}</div>`
+          }
+        </div>
+      </div>
+    `;
+
+    // BODY
+    const techArr      = Array.isArray(p.tech)       ? p.tech       : [];
+    const challengeArr = Array.isArray(p.challenges) ? p.challenges : [];
+    const resultsArr   = Array.isArray(p.results)    ? p.results    : [];
+    const metricsArr   = Array.isArray(p.metrics)    ? p.metrics    : [];
+
+    const techTags       = techArr.map(t => `<span class="tech-tag">${t}</span>`).join('');
+    const challengeItems = challengeArr.map(c => `<li>${c}</li>`).join('');
+    const resultItems    = resultsArr.map(r => `<li>${r}</li>`).join('');
+    const metricCards    = metricsArr.map(m => `<div class="metric-card"><div class="metric-num">${m.num}</div><div class="metric-label">${m.label}</div></div>`).join('');
+    const screensHtml = p.screens.map((s, i) => s.img
+      ? `<div class="screenshot"><img src="${s.img}" alt="${s.label||''}" style="width:100%;height:100%;object-fit:cover;"></div>`
+      : `<div class="screenshot" style="background:${s.bg};"><svg width="${i===0?80:56}" height="${i===0?80:56}" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>`
+    ).join('');
+
+    document.getElementById('project-body-section').innerHTML = `
+      <div class="project-body">
+        <div class="project-main">
+          <h2>Latar Belakang &amp; Tantangan</h2>
+          ${p.challenge ? `<p>${p.challenge}</p>` : ''}
+          ${challengeItems ? `<ul class="challenge-list">${challengeItems}</ul>` : ''}
+
+          <h2>Pendekatan &amp; Solusi</h2>
+          ${p.solution ? `<p>${p.solution}</p>` : ''}
+
+          ${screensHtml ? `<div class="screenshots">${screensHtml}</div>` : ''}
+
+          <h2>Hasil yang Dicapai</h2>
+          ${metricCards ? `<div class="metrics-grid">${metricCards}</div>` : ''}
+          ${resultItems ? `<ul class="result-list">${resultItems}</ul>` : ''}
+        </div>
+
+        <div class="project-sidebar">
+          <div class="sidebar-card">
+            <div class="sidebar-title">Informasi Proyek</div>
+            <div class="info-row"><span class="info-key">Klien</span><span class="info-val">${p.client||'—'}</span></div>
+            <div class="info-row"><span class="info-key">Durasi</span><span class="info-val">${p.duration||'—'}</span></div>
+            <div class="info-row"><span class="info-key">Kategori</span><span class="info-val">${p.cat}</span></div>
+            <div class="info-row"><span class="info-key">Tahun</span><span class="info-val">${p.year}</span></div>
+            <div class="info-row" style="border-bottom:none;"><span class="info-key">Scope</span><span class="info-val">${p.scope||p.cat}</span></div>
+          </div>
+          <div class="sidebar-card">
+            <div class="sidebar-title">Teknologi & Tools</div>
+            <div class="tech-stack">${techTags}</div>
+          </div>
+          <a href="lighthouse-kontak.html" class="sidebar-cta">Proyek Serupa? Hubungi Kami →</a>
+        </div>
+      </div>
+    `;
+
+    // MORE PROJECTS
+    const others = projectList.filter(p2 => p2.id !== id).slice(0, 3);
+    const moreCards = others.map(p2 => `
+      <a class="more-card" href="lighthouse-portfolio-detail.html?id=${p2.id}">
+        <div class="more-thumb" style="background:${p2.bg};display:flex;align-items:center;justify-content:center;">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+        </div>
+        <div class="more-info">
+          <div class="more-cat">${p2.cat}</div>
+          <div class="more-title">${p2.title}</div>
+          <div class="more-year">${p2.year}</div>
+        </div>
+      </a>
+    `).join('');
+
+    document.getElementById('more-projects-section').innerHTML = `
+      <div class="more-projects">
+        <span class="label">Proyek Lainnya</span>
+        <h2 class="section-title" style="margin-top:.6rem;">Karya Pilihan Kami</h2>
+        <div class="more-grid">${moreCards}</div>
+        <div style="text-align:center;margin-top:2.5rem;">
+          <a href="lighthouse-portfolio.html" class="btn btn-outline">Lihat Semua Portfolio →</a>
+        </div>
+      </div>
+    `;
+  }
+
+  render();
+</script>
+</body>
+</html>
