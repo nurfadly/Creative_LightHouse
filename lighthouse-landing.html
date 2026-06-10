@@ -274,6 +274,39 @@
     .section-header.centered { align-items: center; text-align: center; }
     .section-header.centered .section-sub { margin: 0 auto; }
 
+    /* ─── Clients (Dipercaya Oleh) ─────────────────────── */
+    .clients-section { padding: 3rem 5vw; background: var(--bg); border-bottom: 1px solid var(--border); }
+    .clients-label { text-align: center; font-size: .72rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--text-light); margin-bottom: 1.8rem; }
+    .clients-track-wrap { overflow: hidden; position: relative; }
+    .clients-track-wrap::before,
+    .clients-track-wrap::after {
+      content: '';
+      position: absolute; top: 0; bottom: 0; width: 80px; z-index: 2;
+      pointer-events: none;
+    }
+    .clients-track-wrap::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
+    .clients-track-wrap::after  { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
+    .clients-track {
+      display: flex;
+      gap: 3rem;
+      align-items: center;
+      width: max-content;
+      animation: marquee 28s linear infinite;
+    }
+    .clients-track:hover { animation-play-state: paused; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .client-logo-item {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      opacity: .5;
+      filter: grayscale(1);
+      transition: opacity .3s, filter .3s;
+    }
+    .client-logo-item:hover { opacity: 1; filter: grayscale(0); }
+    .client-logo-item img { height: 36px; width: auto; max-width: 120px; object-fit: contain; }
+
     /* ─── Services ─────────────────────────────────────── */
     .services { background: var(--bg-2); }
     .services-grid {
@@ -825,6 +858,14 @@
 </div>
 
 
+<!-- ═══════════════════ CLIENTS ═══════════════════ -->
+<section class="clients-section" id="clients-section" style="display:none;">
+  <p class="clients-label">Dipercaya Oleh</p>
+  <div class="clients-track-wrap">
+    <div class="clients-track" id="clients-track"></div>
+  </div>
+</section>
+
 <!-- ═══════════════════ SERVICES ═══════════════════ -->
 <section class="services" id="services">
   <div class="section-header">
@@ -1236,6 +1277,23 @@
 </script>
 
 <script>
+// ─── Dynamic Clients (Dipercaya Oleh) ────────────────────────
+(function() {
+  let clients;
+  try { clients = JSON.parse(localStorage.getItem('lh_clients') || '[]'); } catch(e) { return; }
+  const active = clients.filter(c => c.active === 'active').sort((a,b) => (a.order||99)-(b.order||99));
+  if (!active.length) return;
+
+  const section = document.getElementById('clients-section');
+  const track   = document.getElementById('clients-track');
+  // Duplicate items for seamless loop
+  const items = [...active, ...active].map(c =>
+    `<div class="client-logo-item" title="${c.name}"><img src="${c.logo}" alt="${c.name}"></div>`
+  ).join('');
+  track.innerHTML = items;
+  section.style.display = '';
+})();
+
 // ─── Dynamic Services from CMS ───────────────────────────────
 (function() {
   const SVC_ICONS = {
