@@ -1,21 +1,31 @@
 <?php
 // ============================================================
-// LIGHTHOUSE CMS — API Config
-// Edit DB_HOST, DB_NAME, DB_USER, DB_PASS sesuai VPS Anda
+// LIGHTHOUSE CMS — API Config (cPanel / Shared Hosting)
+//
+// Cara isi nilai di bawah:
+//   DB_HOST  → biasanya 'localhost' di cPanel
+//   DB_NAME  → nama DB yang dibuat di cPanel → MySQL Databases
+//              format: username_namadb  (contoh: kalla_lighthouse)
+//   DB_USER  → username DB dari cPanel → MySQL Databases
+//              format: username_namauser  (contoh: kalla_cmsuser)
+//   DB_PASS  → password DB yang diset saat buat user di cPanel
+//
+// UPLOAD_URL → ganti yourdomain.com dengan domain hosting Anda
 // ============================================================
 
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'lighthouse_cms');
-define('DB_USER', 'lighthouse_user');  // ganti sesuai MySQL user Anda
-define('DB_PASS', 'GantiPasswordIni'); // ganti dengan password MySQL Anda
+define('DB_NAME', 'kalla_lighthouse');   // ← ganti sesuai nama DB di cPanel
+define('DB_USER', 'kalla_cmsuser');      // ← ganti sesuai DB user di cPanel
+define('DB_PASS', 'GantiPasswordIni');   // ← ganti dengan password DB Anda
 
 define('UPLOAD_DIR',  __DIR__ . '/../uploads/');
-define('UPLOAD_URL',  '/uploads/'); // URL path relatif ke domain
+define('UPLOAD_URL',  'https://yourdomain.com/uploads/'); // ← ganti domain
 
 // ── CORS ──────────────────────────────────────────────────
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 $allowed = [
-    // Tambah domain GitHub Pages Anda di sini jika frontend di GitHub Pages
+    'https://yourdomain.com',      // ← ganti dengan domain cPanel Anda
+    'https://www.yourdomain.com',  // ← dengan www juga
     'https://nurfadly.github.io',
     'http://localhost',
     'http://127.0.0.1',
