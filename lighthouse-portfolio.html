@@ -553,7 +553,7 @@
     });
   }
 
-  // ── Render portfolio dari localStorage (CMS) ─────────────────────
+  // ── Render portfolio dari PHP API ────────────────────────────────
   const GRAD = [
     'linear-gradient(135deg,#1a0a05 0%,#6b1a08 40%,#fc4615 100%)',
     'linear-gradient(135deg,#041a0d 0%,#0a6b30 40%,#20c97a 100%)',
@@ -616,13 +616,16 @@
     if (card) { const img = card.querySelector('.project-thumb-img'); if (img) img.style.transform = ''; }
   });
 
-  function renderPortfolio() {
-    let projects = [];
-    try { projects = JSON.parse(localStorage.getItem('lh_projects')||'[]').filter(p=>p.status==='published'); } catch(e) {}
-
+  async function renderPortfolio() {
     const grid = document.getElementById('portfolioGrid');
-
-    if (projects.length === 0) {
+    try {
+      const res  = await fetch('api/projects.php?action=public');
+      const data = await res.json();
+      if (!data.success || !data.data.length) throw new Error('empty');
+      // Map API field names to what buildCard expects
+      const projects = data.data.map(p => ({ ...p, short: p.short_desc }));
+      grid.innerHTML = projects.map(p => buildCard(p)).join('');
+    } catch(e) {
       // Tetap gunakan kartu static yang sudah ada di HTML
       document.querySelectorAll('#portfolioGrid .project-card').forEach((card, i) => {
         const staticIds = ['ecommerce-fashion','brand-fintech','uiux-banking','strategy-fnb','web-konstruksi','brand-healthcare','uiux-properti','web-akademi'];
@@ -631,12 +634,7 @@
           if (staticIds[i]) window.location.href = 'lighthouse-portfolio-detail.html?id='+staticIds[i];
         });
       });
-      return;
     }
-
-    // Render dari CMS
-    grid.innerHTML = projects.map(p => buildCard(p)).join('');
-
   }
 
   renderPortfolio();

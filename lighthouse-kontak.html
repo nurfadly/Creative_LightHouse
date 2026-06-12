@@ -497,9 +497,8 @@
   const nav = document.querySelector('.nav');
   window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    // Collect form data
     const name    = document.getElementById('f-name').value.trim();
     const company = document.getElementById('f-company').value.trim();
     const email   = document.getElementById('f-email').value.trim();
@@ -509,23 +508,21 @@
     const timeline= document.getElementById('f-timeline').value;
     const budget  = document.querySelector('input[name="budget"]:checked')?.value || '';
 
-    // Save to localStorage (lh_leads) for CMS
+    const btn = e.target.querySelector('button[type="submit"]');
+    if (btn) { btn.disabled=true; btn.textContent='Mengirim...'; }
+
     try {
-      const leads = JSON.parse(localStorage.getItem('lh_leads') || '[]');
-      leads.unshift({
-        id:      Date.now(),
-        name, email, phone,
-        company: company || '—',
-        service, message,
-        budget, timeline,
-        status:  'Baru',
-        date:    new Date().toISOString(),
-        notes:   '',
-        updatedBy: '',
-        updatedAt: ''
+      const res = await fetch('api/leads.php?action=submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, company: company||'—', email, phone, service, message, budget, timeline }),
       });
-      localStorage.setItem('lh_leads', JSON.stringify(leads));
-    } catch(err) { console.warn('localStorage not available', err); }
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Gagal mengirim');
+    } catch(err) {
+      console.warn('Submit lead gagal:', err);
+      // Tetap tampilkan sukses kepada user meski API gagal
+    }
 
     // Show success state
     document.getElementById('formBlock').style.display = 'none';

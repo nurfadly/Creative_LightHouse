@@ -743,44 +743,47 @@
     'linear-gradient(135deg,#111 0%,#333 50%,#555 100%)',
   ];
 
-  function mapCmsProject(p) {
-    const coverImg = p.thumbnail || p.gallery?.[0] || null;
+  function mapApiProject(p) {
+    // Parse JSON fields that PHP returns as strings or already arrays
+    const parseJ = v => { if (!v) return []; if (Array.isArray(v)) return v; try { return JSON.parse(v); } catch(e) { return []; } };
+    const gallery  = parseJ(p.gallery);
+    const coverImg = p.thumbnail || (gallery.length ? gallery[0].url || gallery[0] : null) || null;
     const coverBg  = coverImg ? null : GRAD_COLORS[p.color % 6];
-    const screens  = p.gallery && p.gallery.length
-      ? p.gallery.slice(0, 3).map((img, i) => ({ img, label: 'Screenshot ' + (i + 1) }))
+    const screens  = gallery.length
+      ? gallery.slice(0, 3).map((g, i) => ({ img: g.url || g, label: g.name || 'Screenshot ' + (i + 1) }))
       : [{ bg: GRAD_COLORS[p.color % 6], label: 'Preview' }];
     return {
       cat:        p.cat,
       year:       String(p.year),
       title:      p.title,
-      desc:       p.long || p.short || '',
+      desc:       p.long_desc || p.short_desc || '',
       coverBg,
       coverImg,
       coverIcon:  '<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
       client:     p.client || '—',
       duration:   p.duration || '—',
       scope:      p.scope || p.cat,
-      tech:       Array.isArray(p.tech) ? p.tech : [],
+      tech:       parseJ(p.tech),
       challenge:  p.challenge || '',
-      challenges: Array.isArray(p.challenges) ? p.challenges : [],
+      challenges: parseJ(p.challenges),
       solution:   p.solution || '',
-      results:    Array.isArray(p.results) ? p.results : [],
-      metrics:    Array.isArray(p.metrics) ? p.metrics : [],
+      results:    parseJ(p.results),
+      metrics:    parseJ(p.metrics),
       screens,
     };
   }
 
-  function render() {
+  async function render() {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id') || 'ecommerce-fashion';
 
-    // ── Try localStorage first (CMS project = numeric ID) ───────────
+    // ── Try PHP API first (numeric ID = CMS project) ─────────────────
     let p = null;
     if (/^\d+$/.test(id)) {
       try {
-        const stored = JSON.parse(localStorage.getItem('lh_projects') || '[]');
-        const found  = stored.find(x => String(x.id) === id);
-        if (found) p = mapCmsProject(found);
+        const res  = await fetch(`api/projects.php?action=get&id=${id}`);
+        const data = await res.json();
+        if (data.success && data.data) p = mapApiProject(data.data);
       } catch(e) {}
     }
     // ── Fall back to hardcoded slug data ─────────────────────────────

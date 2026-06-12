@@ -584,7 +584,7 @@
     <p class="section-sub">Lintas disiplin, satu tujuan — menghadirkan karya digital terbaik untuk klien kami.</p>
   </div>
   <div class="team-grid" id="team-grid">
-    <!-- Diisi dinamis dari localStorage lh_team → lihat script di bawah -->
+    <!-- Diisi dinamis dari PHP API → lihat script di bawah -->
   </div>
 </section>
 
@@ -672,7 +672,7 @@
   }, { threshold: 0.5 });
   nums.forEach(n => obs.observe(n));
 
-  // ── Tim: render dari localStorage lh_team ──────────────────────────
+  // ── Tim: render dari PHP API ──────────────────────────────────────
   const TEAM_GRADIENTS = [
     'linear-gradient(135deg,#1a0a05,#fc4615,#ff8040)',
     'linear-gradient(135deg,#0a1a10,#20c97a,#40e090)',
@@ -682,11 +682,10 @@
     'linear-gradient(135deg,#111,#333,#555)',
   ];
 
-  // Fallback jika localStorage kosong
   const FALLBACK_TEAM = [
-    { name:'Rizal Ardiansyah', role:'Co-Founder & Creative Director', bio:'7 tahun pengalaman di UI/UX dan brand identity. Percaya bahwa desain yang baik adalah desain yang tidak terlihat — ia cukup intuitif sehingga pengguna tak perlu berpikir.', skills:['UI/UX Design','Branding','Figma'], color:0, active:'active', photo:'' },
-    { name:'Dinda Wulandari',  role:'Co-Founder & Tech Lead',          bio:'Full-stack developer dengan spesialisasi React & Node.js. Obsesi pada performa dan aksesibilitas — website klien kami tidak hanya cantik, tapi juga cepat dan inklusif.', skills:['React / Next.js','Node.js','CMS'], color:1, active:'active', photo:'' },
-    { name:'Muhammad Fauzan', role:'Head of Strategy & Growth',        bio:'Mantan konsultan digital dengan track record membantu 50+ bisnis menyusun strategi online yang menghasilkan pertumbuhan terukur. Data-driven, tapi tetap human-centered.', skills:['Digital Strategy','SEO / SEM','Analytics'], color:2, active:'active', photo:'' },
+    { name:'Budi Pratama',    role:'Co-Founder & Creative Director', bio:'10+ tahun pengalaman di branding dan UI/UX. Sebelumnya Creative Lead di agensi internasional Jakarta.', skills:['UI/UX Design','Branding','Figma'], color:0, active:1, photo:'' },
+    { name:'Sari Dewi',       role:'Head of Development',            bio:'Full-stack developer spesialis React dan Laravel. Passionate tentang performa dan clean architecture.',  skills:['React / Next.js','Node.js','Laravel'], color:1, active:1, photo:'' },
+    { name:'Reza Firmansyah', role:'Project Manager',                bio:'Bersertifikasi PMP dengan track record delivery 40+ proyek digital tepat waktu dan dalam anggaran.',      skills:['Project Management','Agile','Analytics'], color:2, active:1, photo:'' },
   ];
 
   function getInitials(name) {
@@ -694,21 +693,16 @@
     return (parts.length >= 2 ? parts[0][0] + parts[1][0] : name.slice(0,2)).toUpperCase();
   }
 
-  function renderTeamSection() {
-    let team;
-    try { team = JSON.parse(localStorage.getItem('lh_team') || '[]'); } catch(e) { team = []; }
-    const active = team.filter(m => m.active === 'active');
-    const source = active.length ? active : FALLBACK_TEAM;
-
+  function renderTeamCards(source) {
     document.getElementById('team-grid').innerHTML = source.map(m => {
       const grad = TEAM_GRADIENTS[m.color ?? 0];
+      // skills may be JSON string from API or already an array
+      const skillsArr = Array.isArray(m.skills) ? m.skills : (typeof m.skills === 'string' ? JSON.parse(m.skills||'[]') : []);
       const photoStyle = m.photo
         ? `background-image:url('${m.photo}');background-size:cover;background-position:center;`
         : `background:${grad};`;
-      const initialsHtml = m.photo
-        ? ''
-        : `<span style="position:relative;z-index:2;font-size:1.6rem;font-weight:900;color:#fff;letter-spacing:-.02em;">${getInitials(m.name)}</span>`;
-      const skillTags = (m.skills||[]).map(s=>`<span class="skill-tag">${s}</span>`).join('');
+      const initialsHtml = m.photo ? '' : `<span style="position:relative;z-index:2;font-size:1.6rem;font-weight:900;color:#fff;letter-spacing:-.02em;">${getInitials(m.name)}</span>`;
+      const skillTags = skillsArr.map(s=>`<span class="skill-tag">${s}</span>`).join('');
       return `
         <div class="team-card">
           <div class="team-photo" style="${photoStyle}">${initialsHtml}</div>
@@ -722,23 +716,28 @@
     }).join('');
   }
 
-  renderTeamSection();
+  fetch('api/team.php?action=public')
+    .then(r => r.json())
+    .then(data => {
+      const source = (data.success && data.data.length) ? data.data : FALLBACK_TEAM;
+      renderTeamCards(source);
+    })
+    .catch(() => renderTeamCards(FALLBACK_TEAM));
 
   // ─── Dynamic Clients (Dipercaya Oleh) ──────────────────
-  (function() {
-    let clients;
-    try { clients = JSON.parse(localStorage.getItem('lh_clients') || '[]'); } catch(e) { return; }
-    const active = clients.filter(c => c.active === 'active').sort((a,b) => (a.order||99)-(b.order||99));
-    if (!active.length) return; // tampilkan static fallback
-    // Sembunyikan static, tampilkan marquee
-    document.getElementById('clients-static').style.display = 'none';
-    const wrap  = document.getElementById('clients-track-wrap');
-    const track = document.getElementById('clients-track');
-    track.innerHTML = [...active, ...active].map(c =>
-      `<div class="client-logo-item" title="${c.name}"><img src="${c.logo}" alt="${c.name}"></div>`
-    ).join('');
-    wrap.style.display = '';
-  })();
+  fetch('api/clients.php?action=public')
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success || !data.data.length) return;
+      const active = data.data.sort((a,b) => (a.order_num||99)-(b.order_num||99));
+      document.getElementById('clients-static').style.display = 'none';
+      const wrap  = document.getElementById('clients-track-wrap');
+      const track = document.getElementById('clients-track');
+      track.innerHTML = [...active, ...active].map(c =>
+        `<div class="client-logo-item" title="${c.name}"><img src="${c.logo}" alt="${c.name}"></div>`
+      ).join('');
+      if (wrap) wrap.style.display = '';
+    }).catch(() => {});
 
   // Hamburger menu toggle
   const hamburger = document.getElementById('nav-hamburger');
